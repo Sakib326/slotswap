@@ -33,9 +33,9 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
   const navItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "My Routine", href: "/dashboard", icon: CalendarDays },
-    { label: "Swap Requests", href: "/dashboard", icon: ArrowRightLeft },
-    { label: "Settings", href: "/dashboard", icon: Settings },
+    { label: "My Routine", href: "/dashboard/routine", icon: CalendarDays },
+    { label: "Swap Requests", href: "/dashboard/swaps", icon: ArrowRightLeft },
+    { label: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
   if (user?.role === "ADMIN") {
@@ -84,6 +84,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
               item.href === "/admin"
                 ? pathname.startsWith("/admin")
                 : pathname === item.href;
+
             return (
               <Link
                 key={item.label}
