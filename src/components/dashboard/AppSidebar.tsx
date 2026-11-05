@@ -33,15 +33,15 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
   const navItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "My Routine", href: "/dashboard/routine", icon: CalendarDays },
-    { label: "Swap Requests", href: "/dashboard/swaps", icon: ArrowRightLeft },
-    { label: "Settings", href: "/dashboard/settings", icon: Settings },
+    { label: "My Routine", href: "/dashboard", icon: CalendarDays },
+    { label: "Swap Requests", href: "/dashboard", icon: ArrowRightLeft },
+    { label: "Settings", href: "/dashboard", icon: Settings },
   ];
 
   if (user?.role === "ADMIN") {
     navItems.push({
       label: "Admin Portal",
-      href: "/admin/users",
+      href: "/admin",
       icon: ShieldCheck,
     });
   }
@@ -80,10 +80,13 @@ export function AppSidebar({ user }: AppSidebarProps) {
         <nav className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive =
+              item.href === "/admin"
+                ? pathname.startsWith("/admin")
+                : pathname === item.href;
             return (
               <Link
-                key={item.href}
+                key={item.label}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-semibold transition ${
@@ -129,7 +132,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
   return (
     <>
-      {/* Mobile Hamburger Toggle Bar */}
+      {/* Mobile Hamburger Bar */}
       <div className="md:hidden flex items-center justify-between px-4 h-14 bg-[#F4F6F3] border-b border-[#16231F]/15 sticky top-0 z-30">
         <Link href="/dashboard" className="font-heading font-bold text-base text-[#16231F]">
           SlotSwap
