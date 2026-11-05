@@ -12,12 +12,18 @@ export default function AdminUsersPage() {
 
   const fetchUsers = async () => {
     try {
+      setLoading(true);
+      setError("");
       const url = q ? `/api/admin/users?q=${encodeURIComponent(q)}` : "/api/admin/users";
       const res = await fetch(url);
       const data = await res.json();
+      if (!res.ok) {
+        setError(data.error?.message || "Failed to fetch users");
+        return;
+      }
       setUsers(data.items || []);
-    } catch {
-      setError("Failed to fetch users");
+    } catch (err: any) {
+      setError(err?.message || "Failed to fetch users");
     } finally {
       setLoading(false);
     }
@@ -122,7 +128,21 @@ export default function AdminUsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#16231F]/10">
-              {users.map((u) => (
+              {loading && (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-[#16231F]/50">
+                    Loading users...
+                  </td>
+                </tr>
+              )}
+              {!loading && users.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-[#16231F]/50">
+                    No users found matching your query.
+                  </td>
+                </tr>
+              )}
+              {!loading && users.map((u) => (
                 <tr key={u.id} className="hover:bg-[#F4F6F3]/50">
                   <td className="py-3 px-4">
                     <p className="font-semibold text-sm text-[#16231F]">{u.name}</p>
