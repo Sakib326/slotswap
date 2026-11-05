@@ -1,117 +1,104 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/public/Container";
-import { Section } from "@/components/public/Section";
-import { FaqItem } from "@/components/public/FaqItem";
-import { HelpCircle, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions",
+  title: "Frequently asked questions",
   description:
-    "Find answers to common questions about SlotSwap section swapping, 3-way cycles, schedule clash checks, and safety rules.",
+    "Common questions about SlotSwap section swapping, 3-way cycles, schedule clash checks, and safety rules.",
 };
 
 const faqData = [
   {
     question: "Who can use SlotSwap?",
     answer:
-      "Any currently enrolled university student with an active institutional email address can register, browse, and create section swap requests.",
+      "Any currently enrolled university student with an active institutional email address can register and trade sections.",
   },
   {
     question: "Is a swap on SlotSwap official with the university?",
     answer:
-      "No. SlotSwap coordinates matched student pairs or chains so everyone agrees to switch at the same time. You must still execute the actual section drop/add in your official university advising portal.",
+      "No. SlotSwap coordinates student agreement and checks clash compatibility. You must still execute the actual section drop and add in your university's official registration portal.",
   },
   {
     question: "What is a 3-way swap?",
     answer:
-      "A 3-way swap is a circular cycle between three students (Student A gives to B, B gives to C, and C gives to A). This unlocks trades that are impossible with simple 1-to-1 matching.",
+      "A 3-way swap is a circular cycle where Student A gives to B, B gives to C, and C gives to A. This creates matches when no two students want each other's sections directly.",
   },
   {
     question: "What happens if someone in the chain doesn't confirm?",
     answer:
-      "Our atomic confirmation rule ensures complete safety. If any participant declines or lets their timer run out, the entire swap chain is cleanly cancelled and the remaining students are returned to the matching queue.",
+      "Confirmation is all-or-nothing. If any participant declines or lets their countdown timer expire, the swap cancels safely for everyone and all other students return to the matching pool.",
   },
   {
     question: "How does SlotSwap check for schedule clashes?",
     answer:
-      "When evaluating a match, our algorithm cross-checks both class times and midterm/final exam slots against each student's existing schedule, preventing double booking.",
+      "Our system evaluates both lecture hours and exam periods against your existing classes before proposing a match, preventing double bookings.",
   },
   {
     question: "What if no match is found for my request?",
     answer:
-      "Our Match-Unlock suggestion engine will review nearby possibilities and suggest small adjustments, such as accepting an extra backup section that would complete a match immediately.",
+      "The Match-Unlock engine analyzes nearby request chains and suggests backup sections you could add to unlock an instant trade.",
   },
   {
     question: "What is the reliability score?",
     answer:
-      "Reliability score is a trust rating based on whether a student confirms matches on time. Students with high reliability receive priority in match queue pairing.",
+      "Reliability score is a rating based on whether a student confirms matches on time. Students with higher reliability are prioritized in the matching queue.",
   },
   {
-    question: "Who can see my phone number or contact details?",
+    question: "Who can see my phone number?",
     answer:
-      "Your contact details remain completely private until a swap chain is confirmed by all participants, and only if you opted in to share contact info with your match partners.",
+      "Your contact info is never shown publicly. It is only shared with verified partners in a confirmed swap cycle, and only if you choose to enable sharing.",
   },
   {
     question: "How do I delete my account?",
     answer:
-      "You can request complete account deletion at any time by contacting support@slotswap.example or submitting a request via our Contact page.",
+      "You can request complete account deletion at any time by sending an email from your university address to support@slotswap.example.",
   },
 ];
 
 export default function FaqPage() {
   return (
-    <>
-      {/* Header */}
-      <section className="bg-bg border-b border-border py-16 md:py-20">
-        <Container>
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-soft text-primary text-xs font-semibold uppercase tracking-wider mb-3">
-              <HelpCircle className="w-3.5 h-3.5" />
-              Help & Answers
-            </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold font-heading text-text tracking-tight mb-4">
-              Frequently Asked Questions
-            </h1>
-            <p className="text-lg text-text-muted leading-relaxed">
-              Everything you need to know about automated cycle matching, clash detection,
-              and swap confirmations.
-            </p>
-          </div>
-        </Container>
-      </section>
+    <div className="py-12 md:py-20 text-left">
+      <Container>
+        <div className="max-w-2xl mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-ink leading-tight mb-4">
+            Frequently asked questions
+          </h1>
+          <p className="text-base sm:text-lg text-ink/80 leading-relaxed">
+            Common questions regarding cycle matching, clash prevention, and swap confirmations.
+          </p>
+        </div>
 
-      {/* Accordion Section */}
-      <Section variant="muted">
-        <Container>
-          <div className="max-w-3xl mx-auto space-y-4">
-            {faqData.map((faq, index) => (
-              <FaqItem
-                key={index}
-                question={faq.question}
-                answer={faq.answer}
-                defaultOpen={index === 0}
-              />
-            ))}
+        {/* Plain list with details, single grid line between items, no cards */}
+        <div className="max-w-3xl divide-y divide-ink/15 border-t border-b border-ink/15">
+          {faqData.map((faq, index) => (
+            <details
+              key={index}
+              className="group py-5 text-left"
+              open={index === 0}
+            >
+              <summary className="font-heading font-bold text-base sm:text-lg text-ink cursor-pointer list-none flex items-center justify-between select-none">
+                <span>{faq.question}</span>
+                <span className="text-ink/40 font-mono text-sm group-open:rotate-45 transition-transform shrink-0 ml-4">
+                  +
+                </span>
+              </summary>
+              <div className="mt-3 text-sm text-ink/75 leading-relaxed pr-6">
+                {faq.answer}
+              </div>
+            </details>
+          ))}
+        </div>
 
-            {/* Need More Help Card */}
-            <div className="mt-12 p-8 rounded-2xl bg-white border border-border text-center flex flex-col items-center">
-              <h3 className="text-xl font-bold font-heading text-text mb-2">
-                Have a question not listed here?
-              </h3>
-              <p className="text-sm text-text-muted max-w-md mb-6">
-                Our support team and student moderators are here to assist with any questions or routine issues.
-              </p>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover text-white px-6 py-3 font-semibold text-sm transition shadow-sm"
-              >
-                Contact Support Team <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </Container>
-      </Section>
-    </>
+        {/* Still stuck line at the end */}
+        <div className="mt-12 text-sm text-ink/80">
+          Still stuck?{" "}
+          <Link href="/contact" className="text-pine font-medium underline">
+            Write to us
+          </Link>
+          .
+        </div>
+      </Container>
+    </div>
   );
 }

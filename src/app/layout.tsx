@@ -1,29 +1,36 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import { Bricolage_Grotesque, IBM_Plex_Sans, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "@/lib/redux/StoreProvider";
 
-const jakarta = Plus_Jakarta_Sans({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-jakarta",
+  weight: ["700", "800"],
+  variable: "--font-bricolage",
   display: "swap",
 });
 
-const inter = Inter({
+const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  variable: "--font-inter",
+  variable: "--font-plex",
+  display: "swap",
+});
+
+const hindSiliguri = Hind_Siliguri({
+  subsets: ["bengali", "latin"],
+  weight: ["400", "600"],
+  variable: "--font-hind",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
     template: "%s | SlotSwap",
-    default: "SlotSwap - University Course Section Swapping Platform",
+    default: "SlotSwap - University course section swapping",
   },
   description:
-    "Swap course sections in minutes, not Facebook posts. Graph-based multi-way matching, schedule clash validation, and atomic confirmation for university students.",
+    "Post the section you hold and the ones you'd take. SlotSwap finds the match, even when it takes three students, and checks every clash before anyone confirms.",
 };
 
 export default function RootLayout({
@@ -32,8 +39,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${inter.variable}`}>
-      <body className="min-h-screen flex flex-col bg-bg text-text antialiased font-sans">
+    <html
+      lang="en"
+      className={`${bricolage.variable} ${plexSans.variable} ${hindSiliguri.variable}`}
+    >
+      <body className="min-h-screen flex flex-col bg-paper text-ink font-body antialiased">
         <StoreProvider>{children}</StoreProvider>
       </body>
     </html>

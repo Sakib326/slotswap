@@ -2,126 +2,99 @@ import { Metadata } from "next";
 import { LegalLayout } from "@/components/public/LegalLayout";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: "Privacy policy",
   description:
-    "Learn how SlotSwap collects, protects, and handles student data in compliance with campus privacy standards.",
+    "Learn how SlotSwap collects, protects, and handles student routine and identity data.",
 };
 
 const sections = [
-  { id: "information-collected", title: "1. Information We Collect" },
-  { id: "purpose-of-use", title: "2. Why We Collect It" },
-  { id: "information-sharing", title: "3. Who Can See Your Information" },
-  { id: "security-measures", title: "4. How We Protect It" },
-  { id: "cookies", title: "5. Cookies & Tracking" },
-  { id: "retention-deletion", title: "6. Data Retention & Deletion" },
-  { id: "policy-changes", title: "7. Changes to This Policy" },
-  { id: "contact-privacy", title: "8. Contact Us" },
+  { id: "collection", title: "1. Information we collect" },
+  { id: "purpose", title: "2. Why we collect it" },
+  { id: "sharing", title: "3. Who can see your information" },
+  { id: "protection", title: "4. How we protect it" },
+  { id: "cookies", title: "5. Cookies" },
+  { id: "retention", title: "6. Data retention and deletion" },
+  { id: "policy-changes", title: "7. Changes to this policy" },
+  { id: "contact-privacy", title: "8. Contact" },
 ];
 
 export default function PrivacyPage() {
   return (
     <LegalLayout
-      title="Privacy Policy"
+      title="Privacy policy"
       lastUpdated="November 2026"
       sections={sections}
     >
-      <div className="space-y-10 text-text-muted text-base leading-relaxed">
-        {/* Section 1 */}
-        <section id="information-collected" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            1. Information We Collect
+      <div className="space-y-8 text-sm sm:text-base text-ink/80 leading-relaxed">
+        <section id="collection" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            1. Information we collect
           </h2>
           <p>
-            We collect the minimum student information required for reliable matching:
-            full name, institutional university email address, student ID number, department,
-            batch, enrolled course section codes, and optional contact phone numbers. We also
-            collect standard system logs including IP addresses and device browser headers.
+            We collect the student name, university email, student ID, department, batch, and current course section registrations. We also log standard request metadata like IP address and browser headers for security.
           </p>
         </section>
 
-        {/* Section 2 */}
-        <section id="purpose-of-use" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            2. Why We Collect It
+        <section id="purpose" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            2. Why we collect it
           </h2>
           <p>
-            Your information is processed strictly to authenticate student status, execute
-            algorithmic graph matching, verify class schedule clash compatibility, and deliver
-            transactional notifications when a cycle match is confirmed. We never sell or monetize
-            student information.
+            Information is collected strictly to authenticate enrolled student status, run cycle matching algorithms, verify routine clash compatibility, and deliver swap alerts.
           </p>
         </section>
 
-        {/* Section 3 */}
-        <section id="information-sharing" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            3. Who Can See Your Information
+        <section id="sharing" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            3. Who can see your information
           </h2>
           <p>
-            Your section requests are displayed anonymously in public matching queues. Only once
-            a swap cycle is fully confirmed by every participant are contact details shared with
-            the relevant swap partners to facilitate official portal coordination, and only in
-            accordance with your account privacy settings.
+            Swap requests are anonymized in public queues. Your contact details are only shared with matching chain partners after all participants explicitly confirm the swap.
           </p>
         </section>
 
-        {/* Section 4 */}
-        <section id="security-measures" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            4. How We Protect It
+        <section id="protection" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            4. How we protect it
           </h2>
           <p>
-            All passwords are encrypted with industry-standard bcrypt hashing. Sessions are
-            secured with cryptographically signed httpOnly, Secure cookies over TLS encryption.
-            Direct database access is restricted to system administrators.
+            Passwords are encrypted with bcrypt hashing. Sessions are maintained via secure, httpOnly cookies over encrypted connections. Direct database access is limited to system maintainers.
           </p>
         </section>
 
-        {/* Section 5 */}
-        <section id="cookies" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            5. Cookies & Tracking
+        <section id="cookies" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            5. Cookies
           </h2>
           <p>
-            SlotSwap uses a single essential session cookie strictly to keep you authenticated.
-            We do not load third-party analytics trackers, advertising cookies, or cross-site
-            fingerprinting scripts.
+            We use a single essential session cookie to manage your authentication state. We do not use third-party analytics or tracking cookies.
           </p>
         </section>
 
-        {/* Section 6 */}
-        <section id="retention-deletion" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            6. Data Retention & Deletion
+        <section id="retention" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            6. Data retention and deletion
           </h2>
           <p>
-            Historical swap records are archived for the duration of the advising semester to
-            maintain system reliability scores and auditability. Students may request immediate
-            and irreversible account and data deletion by sending a request from their registered
-            university email to support.
+            Swap listings are maintained through advising periods. Students may request complete account deletion at any time by emailing support@slotswap.example.
           </p>
         </section>
 
-        {/* Section 7 */}
-        <section id="policy-changes" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            7. Changes to This Policy
+        <section id="policy-changes" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            7. Changes to this policy
           </h2>
           <p>
-            Any modifications to our privacy practices will be documented on this page with an
-            updated timestamp. Material changes impacting data disclosure will be notified through
-            registered student emails.
+            Any modifications to privacy practices will be posted on this page with an updated timestamp.
           </p>
         </section>
 
-        {/* Section 8 */}
-        <section id="contact-privacy" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            8. Contact Us
+        <section id="contact-privacy" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            8. Contact
           </h2>
           <p>
-            If you have questions regarding data privacy or wish to request data deletion, contact
-            our data protection team at <a href="mailto:support@slotswap.example" className="text-primary hover:underline">support@slotswap.example</a>.
+            For privacy inquiries or deletion requests, contact support@slotswap.example.
           </p>
         </section>
       </div>

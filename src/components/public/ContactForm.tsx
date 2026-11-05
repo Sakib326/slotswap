@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 interface FormState {
   name: string;
@@ -82,58 +81,45 @@ export function ContactForm() {
       }
 
       setStatus("success");
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-        website: "",
-      });
     } catch (err: any) {
       setStatus("error");
       setErrorMessage(err.message || "An unexpected error occurred. Please try again.");
     }
   };
 
-  return (
-    <div className="bg-white rounded-2xl border border-border p-6 md:p-8 shadow-sm">
-      <h2 className="text-2xl font-bold font-heading text-text mb-2">
-        Send us a message
-      </h2>
-      <p className="text-sm text-text-muted mb-6">
-        Fill out the form below and our team will get back to you shortly.
-      </p>
+  if (status === "success") {
+    return (
+      <div className="border border-ink/15 rounded-[12px] p-6 bg-white/70 text-left">
+        <h3 className="font-heading font-bold text-lg text-ink mb-2">
+          Message sent
+        </h3>
+        <p className="text-sm text-ink/80 leading-relaxed">
+          Thank you for reaching out. We received your message and will reply within two working days.
+        </p>
+      </div>
+    );
+  }
 
-      {status === "success" && (
-        <div
-          role="alert"
-          className="mb-6 p-4 rounded-xl bg-success-soft border border-success/30 flex items-start gap-3 text-text"
-        >
-          <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
-          <div>
-            <h3 className="font-semibold text-sm">Message received!</h3>
-            <p className="text-xs text-text-muted mt-0.5">
-              Thank you for reaching out. We have logged your request and will reply within 2 working days.
-            </p>
-          </div>
-        </div>
-      )}
+  return (
+    <div className="border border-ink/15 rounded-[12px] p-6 sm:p-8 bg-white/70 text-left">
+      <h2 className="font-heading font-bold text-xl text-ink mb-2">
+        Send a message
+      </h2>
+      <p className="text-xs sm:text-sm text-ink/70 mb-6">
+        All fields marked with an asterisk are required.
+      </p>
 
       {status === "error" && (
         <div
           role="alert"
-          className="mb-6 p-4 rounded-xl bg-danger-soft border border-danger/30 flex items-start gap-3 text-text"
+          className="mb-5 p-3 rounded-[6px] border border-signal/30 bg-marker-pink/30 text-xs text-signal font-medium"
         >
-          <AlertCircle className="w-5 h-5 text-danger shrink-0 mt-0.5" />
-          <div>
-            <h3 className="font-semibold text-sm">Unable to send message</h3>
-            <p className="text-xs text-text-muted mt-0.5">{errorMessage}</p>
-          </div>
+          {errorMessage}
         </div>
       )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
-        {/* Honeypot field (hidden from human users) */}
+        {/* Honeypot field */}
         <div className="hidden" aria-hidden="true">
           <label htmlFor="website">Website</label>
           <input
@@ -151,9 +137,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="name"
-            className="block text-sm font-medium text-text mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-ink/75 mb-1"
           >
-            Full Name <span className="text-danger">*</span>
+            Name *
           </label>
           <input
             id="name"
@@ -164,14 +150,14 @@ export function ContactForm() {
             aria-describedby={errors.name ? "name-error" : undefined}
             value={formData.name}
             onChange={handleChange}
-            placeholder="e.g. John Doe"
-            className={`w-full h-11 rounded-xl border bg-white px-3 text-sm text-text transition focus:outline-none focus:ring-2 focus:ring-primary ${
-              errors.name ? "border-danger ring-1 ring-danger" : "border-border"
+            placeholder="Your name"
+            className={`w-full h-10 rounded-[8px] border bg-white px-3 text-sm text-ink transition focus:outline-none focus:ring-2 focus:ring-pine ${
+              errors.name ? "border-signal" : "border-ink/20"
             }`}
           />
           {errors.name && (
-            <p id="name-error" className="mt-1 text-xs text-danger flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" /> {errors.name}
+            <p id="name-error" className="mt-1 text-xs text-signal">
+              {errors.name}
             </p>
           )}
         </div>
@@ -180,9 +166,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-text mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-ink/75 mb-1"
           >
-            Email Address <span className="text-danger">*</span>
+            University or personal email *
           </label>
           <input
             id="email"
@@ -193,14 +179,14 @@ export function ContactForm() {
             aria-describedby={errors.email ? "email-error" : undefined}
             value={formData.email}
             onChange={handleChange}
-            placeholder="e.g. yourname@northsouth.edu"
-            className={`w-full h-11 rounded-xl border bg-white px-3 text-sm text-text transition focus:outline-none focus:ring-2 focus:ring-primary ${
-              errors.email ? "border-danger ring-1 ring-danger" : "border-border"
+            placeholder="student@university.edu"
+            className={`w-full h-10 rounded-[8px] border bg-white px-3 text-sm text-ink transition focus:outline-none focus:ring-2 focus:ring-pine ${
+              errors.email ? "border-signal" : "border-ink/20"
             }`}
           />
           {errors.email && (
-            <p id="email-error" className="mt-1 text-xs text-danger flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" /> {errors.email}
+            <p id="email-error" className="mt-1 text-xs text-signal">
+              {errors.email}
             </p>
           )}
         </div>
@@ -209,9 +195,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="subject"
-            className="block text-sm font-medium text-text mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-ink/75 mb-1"
           >
-            Subject <span className="text-danger">*</span>
+            Subject *
           </label>
           <input
             id="subject"
@@ -222,14 +208,14 @@ export function ContactForm() {
             aria-describedby={errors.subject ? "subject-error" : undefined}
             value={formData.subject}
             onChange={handleChange}
-            placeholder="e.g. Question about CSE327 section matching"
-            className={`w-full h-11 rounded-xl border bg-white px-3 text-sm text-text transition focus:outline-none focus:ring-2 focus:ring-primary ${
-              errors.subject ? "border-danger ring-1 ring-danger" : "border-border"
+            placeholder="e.g. Question about CSE327 cycle matching"
+            className={`w-full h-10 rounded-[8px] border bg-white px-3 text-sm text-ink transition focus:outline-none focus:ring-2 focus:ring-pine ${
+              errors.subject ? "border-signal" : "border-ink/20"
             }`}
           />
           {errors.subject && (
-            <p id="subject-error" className="mt-1 text-xs text-danger flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" /> {errors.subject}
+            <p id="subject-error" className="mt-1 text-xs text-signal">
+              {errors.subject}
             </p>
           )}
         </div>
@@ -238,48 +224,37 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="message"
-            className="block text-sm font-medium text-text mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-ink/75 mb-1"
           >
-            Message <span className="text-danger">*</span>
+            Message *
           </label>
           <textarea
             id="message"
             name="message"
             required
-            rows={5}
+            rows={4}
             aria-invalid={!!errors.message}
             aria-describedby={errors.message ? "message-error" : undefined}
             value={formData.message}
             onChange={handleChange}
-            placeholder="Tell us how we can help you..."
-            className={`w-full rounded-xl border bg-white p-3 text-sm text-text transition focus:outline-none focus:ring-2 focus:ring-primary ${
-              errors.message ? "border-danger ring-1 ring-danger" : "border-border"
+            placeholder="Describe your inquiry..."
+            className={`w-full rounded-[8px] border bg-white p-3 text-sm text-ink transition focus:outline-none focus:ring-2 focus:ring-pine ${
+              errors.message ? "border-signal" : "border-ink/20"
             }`}
           />
           {errors.message && (
-            <p id="message-error" className="mt-1 text-xs text-danger flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" /> {errors.message}
+            <p id="message-error" className="mt-1 text-xs text-signal">
+              {errors.message}
             </p>
           )}
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={status === "loading"}
-          className="w-full h-11 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-sm transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full h-11 rounded-[8px] bg-pine hover:bg-pine-hover text-paper font-semibold text-sm transition disabled:opacity-50 cursor-pointer"
         >
-          {status === "loading" ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Sending message...
-            </>
-          ) : (
-            <>
-              <Send className="w-4 h-4" />
-              Send Message
-            </>
-          )}
+          {status === "loading" ? "Sending message..." : "Send message"}
         </button>
       </form>
     </div>

@@ -1,140 +1,142 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/public/Container";
-import { Section } from "@/components/public/Section";
-import {
-  UserCheck,
-  BookOpen,
-  Send,
-  Cpu,
-  CheckCircle,
-  AlertTriangle,
-  ArrowRight,
-} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "How It Works",
   description:
-    "Learn how SlotSwap matches course sections in 5 easy steps, validates schedules for clashes, and ensures atomic swap confirmation.",
+    "A step-by-step breakdown of how SlotSwap matches course section requests, checks timetable clashes, and finalizes trades.",
 };
 
 export default function HowItWorksPage() {
-  const timelineSteps = [
+  const steps = [
     {
-      step: 1,
-      icon: <UserCheck className="w-5 h-5 text-primary" />,
+      num: 1,
       title: "Create an account with your university email",
-      description:
-        "Sign up using your official institutional email (e.g. @university.edu). This ensures only currently enrolled students participate in section swaps and keeps the platform spam-free.",
+      desc: "Register using your verified student address. This restricts access to currently enrolled students and keeps the matching pool authentic.",
+      fragment: (
+        <div className="border border-ink/15 rounded-[4px] p-2.5 bg-paper text-xs font-medium text-ink/75 max-w-xs">
+          <span className="font-semibold text-ink">Verified domain:</span> @northsouth.edu
+        </div>
+      ),
     },
     {
-      step: 2,
-      icon: <BookOpen className="w-5 h-5 text-accent" />,
+      num: 2,
       title: "Add the sections you currently hold",
-      description:
-        "Import or select the course sections currently assigned to your routine. SlotSwap maps your schedule to check for overlap before proposing any trades.",
+      desc: "Input your registered course codes and sections from your official advising slip. This routine mapping establishes the baseline for clash calculations.",
+      fragment: (
+        <div className="flex gap-2 max-w-xs">
+          <span className="px-2 py-1 rounded-[4px] bg-marker-yellow text-ink border border-ink/15 text-xs font-semibold">
+            MAT216 · Sec 3
+          </span>
+          <span className="px-2 py-1 rounded-[4px] bg-marker-pink text-ink border border-ink/15 text-xs font-semibold">
+            CSE327 · Sec 5
+          </span>
+        </div>
+      ),
     },
     {
-      step: 3,
-      icon: <Send className="w-5 h-5 text-primary" />,
+      num: 3,
       title: "Post a swap request",
-      description:
-        "Specify the section you want to give up and select all alternative sections you would be happy to accept. The more flexible your criteria, the faster our algorithm pairs you.",
+      desc: "Specify the section you want to give away, then check off all alternative sections you would happily take. The wider your acceptance list, the quicker an algorithm matches you.",
+      fragment: (
+        <div className="border border-ink/15 rounded-[4px] p-2 bg-paper text-xs flex items-center gap-2 max-w-xs">
+          <span className="font-semibold text-signal">Give: Sec 5</span>
+          <span className="text-ink/40">→</span>
+          <span className="font-semibold text-pine">Take: Sec 2, Sec 4, Sec 7</span>
+        </div>
+      ),
     },
     {
-      step: 4,
-      icon: <Cpu className="w-5 h-5 text-accent" />,
-      title: "Automated matching & clash verification",
-      description:
-        "Our engine models requests as a directed graph to discover direct 2-way swaps or 3-way cycles (A gives to B, B gives to C, C gives to A). Before proposing a match, it verifies class times and exam schedules. If no exact match is found, our suggestion engine tells you which backup section unlocks a match immediately.",
+      num: 4,
+      title: "Automated matching and clash verification",
+      desc: "SlotSwap models requests as directed graph edges to find 2-way pairings and 3-way cycles. It automatically checks lecture and exam hours against your other classes. If no direct swap is available, it points out which backup section unlocks a match.",
+      fragment: (
+        <div className="border border-ink/15 rounded-[4px] p-2.5 bg-paper text-xs space-y-1.5 max-w-xs">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-ink">Cycle detection</span>
+            <span className="text-[11px] text-pine font-bold">Valid 3-way</span>
+          </div>
+          <div className="text-[11px] text-ink/70">
+            Exam slot: 09:00–11:00 (No conflict)
+          </div>
+        </div>
+      ),
     },
     {
-      step: 5,
-      icon: <CheckCircle className="w-5 h-5 text-success" />,
-      title: "Atomic confirmation & execution",
-      description:
-        "When a complete cycle is found, all students in the chain are notified and receive a countdown window (e.g., 2 hours) to confirm. If every student confirms, the swap completes. If any student declines or allows their timer to expire, the entire chain cleanly cancels and all other participants return to the matching pool automatically.",
+      num: 5,
+      title: "All participants confirm within the countdown window",
+      desc: "Once a valid chain is identified, every student receives an alert and a time-limited window to confirm. If everyone confirms, contact info is released to perform the portal change. If anyone declines or times out, the chain dissolves and remaining students re-enter matching automatically.",
+      fragment: (
+        <div className="border border-ink/15 rounded-[4px] p-2.5 bg-paper text-xs flex items-center justify-between max-w-xs">
+          <span className="font-medium text-ink">Confirmation timer</span>
+          <span className="tabular-nums font-bold text-signal">01:45:20 remaining</span>
+        </div>
+      ),
     },
   ];
 
   return (
-    <>
-      {/* Page Header */}
-      <section className="bg-bg border-b border-border py-16 md:py-20">
-        <Container>
-          <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-wider text-primary mb-3">
-              Step-by-Step Guide
-            </p>
-            <h1 className="text-4xl md:text-5xl font-extrabold font-heading text-text tracking-tight mb-6">
-              How SlotSwap Works From Start to Finish
-            </h1>
-            <p className="text-lg text-text-muted leading-relaxed">
-              We replaced guesswork and endless social messaging with a reliable,
-              automated 5-step cycle. Here is how your swap request travels through the system.
-            </p>
-          </div>
-        </Container>
-      </section>
+    <div className="py-12 md:py-20 text-left">
+      <Container>
+        <div className="max-w-2xl mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-ink leading-tight mb-4">
+            How a swap works
+          </h1>
+          <p className="text-base sm:text-lg text-ink/80 leading-relaxed">
+            SlotSwap runs on graph cycle detection rather than random comment threads. Here is the five-step sequence from request to confirmation.
+          </p>
+        </div>
 
-      {/* Timeline Section */}
-      <Section variant="white">
-        <Container>
-          <div className="max-w-3xl mx-auto">
-            <div className="relative border-l-2 border-primary/20 ml-4 md:ml-6 pl-6 md:pl-10 space-y-12">
-              {timelineSteps.map((item) => (
-                <div key={item.step} className="relative group">
-                  {/* Step Marker Dot */}
-                  <div className="absolute -left-[35px] md:-left-[51px] top-0 flex items-center justify-center w-9 h-9 rounded-full bg-white border-2 border-primary shadow-sm text-xs font-bold text-primary group-hover:scale-110 transition">
-                    {item.step}
-                  </div>
+        {/* Step-by-step sequence */}
+        <div className="max-w-3xl divide-y divide-ink/15 border-t border-b border-ink/15">
+          {steps.map((st) => (
+            <div key={st.num} className="py-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+              {/* Large tabular numeral */}
+              <div className="md:col-span-2">
+                <span className="font-heading font-extrabold text-4xl sm:text-5xl text-ink/30 tabular-nums">
+                  0{st.num}
+                </span>
+              </div>
 
-                  {/* Card Content */}
-                  <div className="bg-bg-muted p-6 md:p-8 rounded-2xl border border-border shadow-sm group-hover:shadow-md transition">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 rounded-xl bg-white border border-border">
-                        {item.icon}
-                      </div>
-                      <h2 className="text-xl font-bold font-heading text-text">
-                        {item.title}
-                      </h2>
-                    </div>
-                    <p className="text-sm md:text-base text-text-muted leading-relaxed">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Important Disclaimer Notice Box */}
-            <div className="mt-16 p-6 md:p-8 rounded-2xl bg-warning-soft/60 border border-warning/40 flex items-start gap-4">
-              <AlertTriangle className="w-6 h-6 text-warning shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-heading font-bold text-base text-text mb-1">
-                  Important Registration Notice
-                </h3>
-                <p className="text-sm text-text-muted leading-relaxed">
-                  A confirmed match on SlotSwap coordinates student agreement, but does
-                  not automatically replace the official university advising portal or registrar system.
-                  Always ensure that you and your swap partners finalize the official section change
-                  in your university’s portal during authorized advising windows.
+              {/* Title & Description */}
+              <div className="md:col-span-6 space-y-2">
+                <h2 className="font-heading font-bold text-lg sm:text-xl text-ink">
+                  {st.title}
+                </h2>
+                <p className="text-sm text-ink/75 leading-relaxed">
+                  {st.desc}
                 </p>
               </div>
-            </div>
 
-            {/* Call to action */}
-            <div className="mt-12 text-center">
-              <Link
-                href="/register"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover text-white px-8 py-3.5 font-bold transition shadow-sm hover:shadow"
-              >
-                Start Your Swap Request Now <ArrowRight className="w-4 h-4" />
-              </Link>
+              {/* Routine grid fragment / small illustration */}
+              <div className="md:col-span-4">
+                {st.fragment}
+              </div>
             </div>
-          </div>
-        </Container>
-      </Section>
-    </>
+          ))}
+        </div>
+
+        {/* Official registration notice box with Signal border */}
+        <div className="max-w-3xl mt-12 p-5 border-l-4 border-signal bg-white/60 rounded-[8px] border border-ink/10">
+          <p className="font-heading font-bold text-sm text-ink mb-1">
+            Official university registration reminder
+          </p>
+          <p className="text-xs sm:text-sm text-ink/80 leading-relaxed">
+            A swap on SlotSwap coordinates student agreement and verifies compatibility. It does not alter your university&apos;s registrar records directly. You and your matched partners must execute the official section change in the university portal during your designated advising slot.
+          </p>
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="mt-10">
+          <Link
+            href="/register"
+            className="inline-block rounded-[8px] bg-pine hover:bg-pine-hover text-paper text-sm font-semibold px-6 py-3 transition"
+          >
+            Create account
+          </Link>
+        </div>
+      </Container>
+    </div>
   );
 }

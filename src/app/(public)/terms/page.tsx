@@ -2,141 +2,109 @@ import { Metadata } from "next";
 import { LegalLayout } from "@/components/public/LegalLayout";
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions",
+  title: "Terms and conditions",
   description:
     "Review the terms and conditions for using SlotSwap course section swapping platform.",
 };
 
 const sections = [
-  { id: "acceptance", title: "1. Acceptance of Terms" },
+  { id: "acceptance", title: "1. Acceptance of terms" },
   { id: "eligibility", title: "2. Eligibility" },
-  { id: "account-responsibilities", title: "3. Account Responsibilities" },
-  { id: "how-swaps-work", title: "4. How Swaps Work" },
-  { id: "user-conduct", title: "5. User Conduct & Reliability" },
-  { id: "termination", title: "6. Account Suspension & Termination" },
-  { id: "disclaimer", title: "7. Disclaimer & Limitation of Liability" },
-  { id: "changes", title: "8. Changes to Terms" },
-  { id: "contact", title: "9. Contact Information" },
+  { id: "account-responsibilities", title: "3. Account responsibilities" },
+  { id: "how-swaps-work", title: "4. How swaps work" },
+  { id: "user-conduct", title: "5. User conduct and reliability" },
+  { id: "termination", title: "6. Account suspension and termination" },
+  { id: "disclaimer", title: "7. Disclaimer and limitation of liability" },
+  { id: "changes", title: "8. Changes to terms" },
+  { id: "contact", title: "9. Contact" },
 ];
 
 export default function TermsPage() {
   return (
     <LegalLayout
-      title="Terms and Conditions"
+      title="Terms and conditions"
       lastUpdated="November 2026"
       sections={sections}
     >
-      <div className="space-y-10 text-text-muted text-base leading-relaxed">
-        {/* Section 1 */}
-        <section id="acceptance" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            1. Acceptance of Terms
+      <div className="space-y-8 text-sm sm:text-base text-ink/80 leading-relaxed">
+        <section id="acceptance" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            1. Acceptance of terms
           </h2>
           <p>
-            By accessing or using SlotSwap, you agree to comply with and be bound by
-            these Terms and Conditions. If you do not agree with any part of these
-            terms, you may not use the service. SlotSwap is developed as a course
-            project for educational and coordination purposes.
+            By accessing or using SlotSwap, you agree to be bound by these terms. If you do not agree, do not use the application. SlotSwap is developed as a course project for student advising coordination.
           </p>
         </section>
 
-        {/* Section 2 */}
-        <section id="eligibility" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
+        <section id="eligibility" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
             2. Eligibility
           </h2>
           <p>
-            You must be an actively enrolled university student holding a valid,
-            verifiable institutional email address to register an account. Accounts
-            registered with unauthorized or non-student addresses are subject to immediate
-            suspension.
+            You must be an actively enrolled university student with a verified institutional email address. Accounts registered with unauthorized domains are deactivated upon detection.
           </p>
         </section>
 
-        {/* Section 3 */}
-        <section id="account-responsibilities" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            3. Account Responsibilities
+        <section id="account-responsibilities" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            3. Account responsibilities
           </h2>
           <p>
-            You agree to provide true, accurate, and up-to-date information regarding
-            your enrolled courses and section requests. Each student is restricted to a
-            single active account. You remain fully responsible for maintaining the
-            confidentiality of your login credentials.
+            You agree to supply accurate routine and section hold data. One account is permitted per student. You remain fully responsible for protecting your account credentials.
           </p>
         </section>
 
-        {/* Section 4 */}
-        <section id="how-swaps-work" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            4. How Swaps Work
+        <section id="how-swaps-work" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            4. How swaps work
           </h2>
           <p>
-            Matching is carried out via automated algorithms; SlotSwap does not guarantee
-            that every request will produce a valid match. A confirmed trade on SlotSwap
-            coordinates student agreement but does not officially alter university records.
-            Participants must finalize their swaps through official university registration portals.
+            Matching is algorithmic and dependent on demand; SlotSwap does not guarantee every request will find a match. A swap confirmation on this platform does not officially alter university records; students must register their section trade directly in the university portal.
           </p>
         </section>
 
-        {/* Section 5 */}
-        <section id="user-conduct" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            5. User Conduct & Reliability
+        <section id="user-conduct" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            5. User conduct and reliability
           </h2>
           <p>
-            Users must not submit fraudulent section requests or repeatedly accept and then
-            cancel match chains. SlotSwap tracks confirmation reliability scores; users who
-            frequently allow timers to expire or decline confirmed agreements may experience
-            deprioritized match placement.
+            Users must not post fake requests or repeatedly accept and drop swap chains. Reliability scores track confirmation rates; repeated timeouts reduce priority in future matching queues.
           </p>
         </section>
 
-        {/* Section 6 */}
-        <section id="termination" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            6. Account Suspension & Termination
+        <section id="termination" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            6. Account suspension and termination
           </h2>
           <p>
-            We reserve the right to suspend or terminate accounts that violate university
-            honor codes, engage in harassment, attempt to trade sections for money, or disrupt
-            the stability of the matching service. Terminated users forfeit active swap listings.
+            We reserve the right to suspend any account that attempts to trade sections for money, harasses other students, or disrupts system operations.
           </p>
         </section>
 
-        {/* Section 7 */}
-        <section id="disclaimer" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            7. Disclaimer & Limitation of Liability
+        <section id="disclaimer" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            7. Disclaimer and limitation of liability
           </h2>
           <p>
-            SlotSwap is provided on an &quot;as is&quot; and &quot;as available&quot; basis without warranties of
-            any kind. In no event will the developers or academic mentors be liable for dropped
-            sections, registration delays, or missed university deadlines resulting from the
-            use of this tool.
+            SlotSwap is provided on an &quot;as is&quot; basis without warranties. The developers and academic supervisors are not liable for dropped courses, advising portal glitches, or missed deadlines resulting from tool usage.
           </p>
         </section>
 
-        {/* Section 8 */}
-        <section id="changes" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            8. Changes to These Terms
+        <section id="changes" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            8. Changes to terms
           </h2>
           <p>
-            We may update these terms periodically to reflect software enhancements or university
-            policy changes. Continued use of the website following published updates signifies your
-            acceptance of the revised terms.
+            We may update these terms during development. Continued use after changes indicates agreement with the updated terms.
           </p>
         </section>
 
-        {/* Section 9 */}
-        <section id="contact" className="scroll-mt-28">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            9. Contact Information
+        <section id="contact" className="scroll-mt-24">
+          <h2 className="font-heading font-bold text-lg sm:text-xl text-ink mb-2">
+            9. Contact
           </h2>
           <p>
-            If you have questions or concerns regarding these terms, please contact our team via
-            email at <a href="mailto:support@slotswap.example" className="text-primary hover:underline">support@slotswap.example</a> or submit an inquiry through our Contact page.
+            Direct any inquiries regarding these terms to support@slotswap.example or via our Contact page.
           </p>
         </section>
       </div>
