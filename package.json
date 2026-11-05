@@ -24,7 +24,8 @@
     "react-redux": "^9.3.1",
     "swagger-ui-react": "^5.34.1",
     "tailwind-merge": "^3.7.0",
-    "tw-colors": "^3.3.2"
+    "tw-colors": "^3.3.2",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

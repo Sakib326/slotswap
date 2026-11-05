@@ -1,21 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "@/lib/redux/StoreProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-jakarta",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Next.js + RTK + shadcn/ui",
-  description: "Next.js App with Redux Toolkit, RTK Query, Tailwind CSS, and shadcn/ui",
+  title: {
+    template: "%s | SlotSwap",
+    default: "SlotSwap - University Course Section Swapping Platform",
+  },
+  description:
+    "Swap course sections in minutes, not Facebook posts. Graph-based multi-way matching, schedule clash validation, and atomic confirmation for university students.",
 };
 
 export default function RootLayout({
@@ -24,11 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    <html lang="en" className={`${jakarta.variable} ${inter.variable}`}>
+      <body className="min-h-screen flex flex-col bg-bg text-text antialiased font-sans">
         <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
