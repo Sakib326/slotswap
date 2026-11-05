@@ -1,38 +1,16 @@
 @import "tailwindcss";
 
-:root {
-  /* Routine Sheet Design Tokens */
-  --paper: #F4F6F3;
-  --ink: #16231F;
-  --pine: #1D5B4A;
-  --pine-hover: #164639;
+@theme {
+  --color-paper: #F4F6F3;
+  --color-ink: #16231F;
+  --color-pine: #1D5B4A;
+  --color-pine-hover: #164639;
 
-  --marker-blue: #BCD7F2;
-  --marker-yellow: #F5E39B;
-  --marker-pink: #F2C4C4;
-  --marker-mint: #C2E4CE;
-  --signal: #D9381E;
-
-  /* Structure */
-  --border-line: rgba(22, 35, 31, 0.15);
-  --border-line-subtle: rgba(22, 35, 31, 0.08);
-
-  /* Radius hierarchy */
-  --radius-block: 4px;
-  --radius-btn: 8px;
-  --radius-panel: 12px;
-}
-
-@theme inline {
-  --color-paper: var(--paper);
-  --color-ink: var(--ink);
-  --color-pine: var(--pine);
-  --color-pine-hover: var(--pine-hover);
-  --color-marker-blue: var(--marker-blue);
-  --color-marker-yellow: var(--marker-yellow);
-  --color-marker-pink: var(--marker-pink);
-  --color-marker-mint: var(--marker-mint);
-  --color-signal: var(--signal);
+  --color-marker-blue: #BCD7F2;
+  --color-marker-yellow: #F5E39B;
+  --color-marker-pink: #F2C4C4;
+  --color-marker-mint: #C2E4CE;
+  --color-signal: #D9381E;
 
   --font-heading: var(--font-bricolage), system-ui, sans-serif;
   --font-body: var(--font-plex), var(--font-hind), system-ui, sans-serif;
@@ -40,13 +18,13 @@
 
 html {
   scroll-behavior: smooth;
-  background-color: var(--paper);
-  color: var(--ink);
+  background-color: #F4F6F3;
+  color: #16231F;
 }
 
 body {
-  background-color: var(--paper);
-  color: var(--ink);
+  background-color: #F4F6F3;
+  color: #16231F;
   font-family: var(--font-body);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -54,7 +32,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  color: var(--ink);
+  color: #16231F;
   letter-spacing: -0.025em;
   font-weight: 700;
   text-wrap: balance;
@@ -67,68 +45,36 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Accessible focus ring */
 *:focus-visible {
-  outline: 2px solid var(--pine);
+  outline: 2px solid #1D5B4A;
   outline-offset: 2px;
 }
+
+/* Routine grid specific classes for safety against CSS purging */
+.bg-paper { background-color: #F4F6F3; }
+.bg-ink { background-color: #16231F; }
+.bg-pine { background-color: #1D5B4A; }
+.hover\:bg-pine-hover:hover { background-color: #164639; }
+.bg-marker-blue { background-color: #BCD7F2; }
+.bg-marker-yellow { background-color: #F5E39B; }
+.bg-marker-pink { background-color: #F2C4C4; }
+.bg-marker-mint { background-color: #C2E4CE; }
+.bg-signal { background-color: #D9381E; }
+
+.text-paper { color: #F4F6F3; }
+.text-ink { color: #16231F; }
+.text-pine { color: #1D5B4A; }
+.text-signal { color: #D9381E; }
+
+.border-ink\/15 { border-color: rgba(22, 35, 31, 0.15); }
+.border-ink\/20 { border-color: rgba(22, 35, 31, 0.20); }
+.border-ink\/10 { border-color: rgba(22, 35, 31, 0.10); }
 
 /* Swap animation for routine grid on homepage */
 @keyframes swap-move-a {
   0% {
     transform: translate(0, 0);
   }
-  40% {
-    transform: translate(0, -6px) scale(1.02);
-  }
   100% {
-    transform: translate(110px, 48px);
-  }
-}
-
-@keyframes swap-move-b {
-  0% {
     transform: translate(0, 0);
-  }
-  40% {
-    transform: translate(0, 6px) scale(0.98);
-  }
-  100% {
-    transform: translate(-110px, -48px);
-  }
-}
-
-@keyframes chip-fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .animate-swap-a {
-    animation: swap-move-a 900ms ease-in-out 400ms forwards;
-  }
-  .animate-swap-b {
-    animation: swap-move-b 900ms ease-in-out 400ms forwards;
-  }
-  .animate-chip {
-    opacity: 0;
-    animation: chip-fade-in 400ms ease-out 1350ms forwards;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-swap-a {
-    transform: translate(110px, 48px);
-  }
-  .animate-swap-b {
-    transform: translate(-110px, -48px);
-  }
-  .animate-chip {
-    opacity: 1;
-    transform: none;
   }
 }

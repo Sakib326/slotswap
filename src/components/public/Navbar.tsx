@@ -17,22 +17,22 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-paper border-b border-ink/15">
+    <header className="sticky top-0 z-40 bg-[#F4F6F3] border-b border-[#16231F]/15">
       <Container>
         <div className="flex h-16 items-center justify-between">
-          {/* Logo with 2x2 grid glyph where two cells offset to suggest swap */}
+          {/* Logo with clean 2x2 grid glyph */}
           <Link
             href="/"
-            className="flex items-center gap-3 font-heading font-extrabold text-xl tracking-tight text-ink"
+            className="flex items-center gap-2.5 font-heading font-extrabold text-xl tracking-tight text-[#16231F]"
           >
             <span
-              className="grid grid-cols-2 gap-1 w-6 h-6 p-0.5 border border-ink/20 rounded-[4px] bg-paper shrink-0"
+              className="grid grid-cols-2 gap-0.5 w-6 h-6 p-1 border border-[#16231F]/25 rounded-[4px] bg-white shrink-0"
               aria-hidden="true"
             >
-              <span className="bg-pine rounded-[2px]" />
-              <span className="bg-marker-yellow rounded-[2px] translate-y-0.5" />
-              <span className="bg-marker-blue rounded-[2px] -translate-y-0.5" />
-              <span className="bg-pine rounded-[2px]" />
+              <span className="bg-[#1D5B4A] rounded-[1px] w-full h-full block" />
+              <span className="bg-[#F5E39B] rounded-[1px] w-full h-full block" />
+              <span className="bg-[#BCD7F2] rounded-[1px] w-full h-full block" />
+              <span className="bg-[#C2E4CE] rounded-[1px] w-full h-full block" />
             </span>
             <span>SlotSwap</span>
           </Link>
@@ -50,8 +50,8 @@ export function Navbar() {
                   href={link.href}
                   className={`text-sm transition-colors ${
                     isActive
-                      ? "text-pine font-semibold"
-                      : "text-ink/75 hover:text-ink"
+                      ? "text-[#1D5B4A] font-semibold"
+                      : "text-[#16231F]/75 hover:text-[#16231F]"
                   }`}
                 >
                   {link.label}
@@ -64,13 +64,13 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-5">
             <Link
               href="/login"
-              className="text-sm font-medium text-ink/75 hover:text-ink"
+              className="text-sm font-medium text-[#16231F]/80 hover:text-[#16231F]"
             >
-              Log in
+              Login
             </Link>
             <Link
               href="/register"
-              className="rounded-[8px] bg-pine hover:bg-pine-hover text-paper text-sm font-semibold px-4 py-2 transition"
+              className="rounded-[8px] bg-[#1D5B4A] hover:bg-[#164639] text-[#F4F6F3] text-sm font-semibold px-4 py-2 transition shadow-sm"
             >
               Create account
             </Link>
@@ -81,7 +81,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setOpen(!open)}
-              className="p-2 text-ink border border-ink/15 rounded-[8px]"
+              className="p-2 text-[#16231F] border border-[#16231F]/15 rounded-[8px]"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
             >
@@ -104,7 +104,7 @@ export function Navbar() {
 
         {/* Mobile menu panel */}
         {open && (
-          <div className="md:hidden py-4 border-t border-ink/15 space-y-2">
+          <div className="md:hidden py-4 border-t border-[#16231F]/15 space-y-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -112,25 +112,25 @@ export function Navbar() {
                 onClick={() => setOpen(false)}
                 className={`block px-3 py-2 text-sm rounded-[4px] ${
                   pathname === link.href
-                    ? "bg-pine/10 font-semibold text-pine"
-                    : "text-ink/80 hover:bg-black/5"
+                    ? "bg-[#1D5B4A]/10 font-semibold text-[#1D5B4A]"
+                    : "text-[#16231F]/80 hover:bg-black/5"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-ink/15 space-y-2">
+            <div className="pt-3 border-t border-[#16231F]/15 space-y-2">
               <Link
                 href="/login"
                 onClick={() => setOpen(false)}
-                className="block text-center text-sm py-2 text-ink/80 hover:text-ink"
+                className="block text-center text-sm py-2 text-[#16231F]/80 hover:text-[#16231F]"
               >
-                Log in
+                Login
               </Link>
               <Link
                 href="/register"
                 onClick={() => setOpen(false)}
-                className="block text-center text-sm py-2 rounded-[8px] bg-pine text-paper font-semibold"
+                className="block text-center text-sm py-2 rounded-[8px] bg-[#1D5B4A] text-[#F4F6F3] font-semibold"
               >
                 Create account
               </Link>
