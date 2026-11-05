@@ -7,12 +7,107 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum ContactVisibility {
+  HIDDEN
+  AFTER_CONFIRMATION
+}
+
+enum TimeRange {
+  MORNING
+  AFTERNOON
+  EVENING
+  ANY
+}
+
+enum TokenType {
+  EMAIL_VERIFY
+  PASSWORD_RESET
+}
+
+model Department {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  name      String
+  profiles  Profile[]
+  createdAt DateTime  @default(now())
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String        @id @default(cuid())
+  email           String        @unique
+  emailVerifiedAt DateTime?
+  passwordHash    String
+  role            Role          @default(STUDENT)
+  status          AccountStatus @default(ACTIVE)
+  suspendedReason String?
+  lastLoginAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  profile         Profile?
+  sessions        Session[]
+  tokens          AuthToken[]
+}
+
+model Profile {
+  userId              String            @id
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                String
+  studentId           String            @unique
+  departmentId        String
+  department          Department        @relation(fields: [departmentId], references: [id])
+  batch               String
+  phone               String?
+  contactVisibility   ContactVisibility @default(HIDDEN)
+  preferredDays       String[]          @default([])
+  preferredTimeRange  TimeRange         @default(ANY)
+  allowMultiWaySwaps  Boolean           @default(true)
+  notifyByEmail       Boolean           @default(true)
+  notifyInApp         Boolean           @default(true)
+  reliabilityScore    Int               @default(100)
+  totalSwapsCompleted Int               @default(0)
+  totalSwapsCancelled Int               @default(0)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  @@index([departmentId])
+}
+
+model Session {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAgent    String?
+  ip           String?
+  createdAt    DateTime  @default(now())
+  lastActiveAt DateTime  @default(now())
+  expiresAt    DateTime
+  revokedAt    DateTime?
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model AuthToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      TokenType
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, type])
 }
 
 model ContactMessage {

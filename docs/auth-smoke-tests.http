@@ -1,0 +1,134 @@
+### SlotSwap Auth & Profile Backend Smoke Tests
+@baseUrl = http://localhost:3000
+@origin = http://localhost:3000
+
+### 1. List Departments (Public)
+GET {{baseUrl}}/api/departments
+Origin: {{origin}}
+
+### 2. Register New Student
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+Origin: {{origin}}
+
+{
+  "name": "Tanvir Rahman",
+  "email": "tanvir@northsouth.edu",
+  "password": "Password123",
+  "studentId": "2024-0012",
+  "departmentId": "cmhn6c16h0000r39g40r4v85h",
+  "batch": "Spring 2024"
+}
+
+### 3. Attempt Login Before Verification (Expects 403 EMAIL_NOT_VERIFIED)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Origin: {{origin}}
+
+{
+  "email": "tanvir@northsouth.edu",
+  "password": "Password123"
+}
+
+### 4. Login with Wrong Password (Expects 401 INVALID_CREDENTIALS)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Origin: {{origin}}
+
+{
+  "email": "tanvir@northsouth.edu",
+  "password": "WrongPassword999"
+}
+
+### 5. Login Unknown Email (Expects 401 INVALID_CREDENTIALS - Same message & constant time)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Origin: {{origin}}
+
+{
+  "email": "nonexistent@northsouth.edu",
+  "password": "Password123"
+}
+
+### 6. Login as Admin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Origin: {{origin}}
+
+{
+  "email": "admin@slotswap.example",
+  "password": "AdminPassword123"
+}
+
+### 7. Get Current User Profile (Admin)
+GET {{baseUrl}}/api/users/me
+Origin: {{origin}}
+
+### 8. Update Current Profile (Valid fields)
+PATCH {{baseUrl}}/api/users/me
+Content-Type: application/json
+Origin: {{origin}}
+
+{
+  "name": "System Administrator",
+  "phone": "+8801700000000",
+  "contactVisibility": "AFTER_CONFIRMATION",
+  "preferredDays": ["SUN", "TUE", "THU"],
+  "preferredTimeRange": "MORNING",
+  "allowMultiWaySwaps": true
+}
+
+### 9. Update Profile - Rejection of Illegal Keys (Expects 400 VALIDATION_ERROR)
+PATCH {{baseUrl}}/api/users/me
+Content-Type: application/json
+Origin: {{origin}}
+
+{
+  "role": "ADMIN",
+  "status": "SUSPENDED",
+  "studentId": "HACKED-999"
+}
+
+### 10. List Active Sessions
+GET {{baseUrl}}/api/auth/sessions
+Origin: {{origin}}
+
+### 11. Resend Verification Email (Returns 200 for existing and non-existing)
+POST {{baseUrl}}/api/auth/resend-verification
+Content-Type: application/json
+Origin: {{origin}}
+
+{
+  "email": "tanvir@northsouth.edu"
+}
+
+### 12. Forgot Password (Returns 200)
+POST {{baseUrl}}/api/auth/forgot-password
+Content-Type: application/json
+Origin: {{origin}}
+
+{
+  "email": "admin@slotswap.example"
+}
+
+### 13. Admin: List Users with Search, Filters & Pagination
+GET {{baseUrl}}/api/admin/users?q=admin&page=1&pageSize=20
+Origin: {{origin}}
+
+### 14. Admin: Attempt to Suspend/Delete Self (Expects 403 FORBIDDEN)
+DELETE {{baseUrl}}/api/admin/users/cmhn6c16h0000r39g40r4v85h
+Origin: {{origin}}
+
+### 15. Cross-Origin Request Rejection (Expects 403 FORBIDDEN)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Origin: http://evil-site.com
+
+{
+  "email": "admin@slotswap.example",
+  "password": "AdminPassword123"
+}
+
+### 16. Logout
+POST {{baseUrl}}/api/auth/logout
+Origin: {{origin}}
