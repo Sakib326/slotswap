@@ -5,15 +5,8 @@ import { Container } from "@/components/public/Container";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Why SlotSwap exists, who it serves, and the student team behind this CSE 327 course project.",
+    "Why SlotSwap exists, who it serves, and how it automates section swapping for university students.",
 };
-
-const teamMembers = [
-  { name: "S. M. Sakib", role: "Full Stack Engineer & Algorithm Lead", marker: "bg-marker-mint" },
-  { name: "Team Member 2", role: "Frontend & UI Design", marker: "bg-marker-yellow" },
-  { name: "Team Member 3", role: "Backend & Database", marker: "bg-marker-blue" },
-  { name: "Team Member 4", role: "QA & Integration Testing", marker: "bg-marker-pink" },
-];
 
 export default function AboutPage() {
   return (
@@ -39,35 +32,13 @@ export default function AboutPage() {
             </div>
 
             {/* Academic note */}
-            <div className="my-10 p-5 border border-ink/15 rounded-[12px] bg-white/60">
+            <div className="mt-10 p-5 border border-ink/15 rounded-[12px] bg-white/60">
               <p className="font-heading font-bold text-base text-ink mb-1">
                 Course project context
               </p>
               <p className="text-xs sm:text-sm text-ink/75 leading-relaxed">
                 SlotSwap is a student project built for <strong>CSE 327: Software Engineering</strong>. It is designed around the real constraints and workflows of university advising weeks.
               </p>
-            </div>
-
-            {/* Team Members List */}
-            <div className="mt-12 pt-8 border-t border-ink/15">
-              <h2 className="text-xl sm:text-2xl font-heading font-bold text-ink mb-4">
-                Project team
-              </h2>
-              <div className="divide-y divide-ink/10 border-t border-b border-ink/10">
-                {teamMembers.map((member) => (
-                  <div key={member.name} className="py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`w-7 h-7 rounded-[4px] ${member.marker} border border-ink/15 flex items-center justify-center font-bold text-xs text-ink`}
-                      >
-                        {member.name.charAt(0)}
-                      </span>
-                      <span className="font-medium text-sm text-ink">{member.name}</span>
-                    </div>
-                    <span className="text-xs text-ink/60">{member.role}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 
