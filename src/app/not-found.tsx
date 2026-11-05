@@ -1,37 +1,41 @@
 import Link from "next/link";
-import { ArrowLeft, Home, FileQuestion } from "lucide-react";
+import { Container } from "@/components/public/Container";
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen bg-bg flex flex-col items-center justify-center p-6 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-primary-soft text-primary flex items-center justify-center mb-6">
-        <FileQuestion className="w-8 h-8" />
-      </div>
+    <main className="min-h-[80vh] flex flex-col justify-center py-16 bg-[#F4F6F3] text-[#16231F] text-left">
+      <Container>
+        <div className="max-w-xl">
+          {/* Routine slot badge */}
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-[4px] bg-[#F2C4C4] border border-[#D9381E]/30 text-xs font-semibold text-[#16231F] mb-6">
+            <span className="w-2 h-2 rounded-full bg-[#D9381E]" />
+            <span>Unscheduled Slot · 404</span>
+          </div>
 
-      <span className="text-xs font-bold uppercase tracking-wider text-primary mb-2">
-        404 Error
-      </span>
-      <h1 className="text-4xl sm:text-5xl font-extrabold font-heading text-text mb-4">
-        Page Not Found
-      </h1>
-      <p className="text-text-muted text-base max-w-md mb-8 leading-relaxed">
-        Sorry, the page you are looking for doesn&apos;t exist, has been removed, or was moved to another section.
-      </p>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-extrabold text-[#16231F] leading-[1.05] tracking-tight mb-4">
+            Section not found
+          </h1>
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary-hover text-white px-6 py-3 font-semibold text-sm transition shadow-sm"
-        >
-          <Home className="w-4 h-4" /> Return to Homepage
-        </Link>
-        <Link
-          href="/how-it-works"
-          className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-white hover:bg-bg-muted text-text px-6 py-3 font-semibold text-sm transition"
-        >
-          <ArrowLeft className="w-4 h-4" /> How It Works
-        </Link>
-      </div>
+          <p className="text-base sm:text-lg text-[#16231F]/80 leading-relaxed mb-8">
+            The page you requested doesn&apos;t exist in the current routine or has been moved to another slot.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <Link
+              href="/"
+              className="rounded-[8px] bg-[#1D5B4A] hover:bg-[#164639] text-[#F4F6F3] px-6 py-3 font-semibold text-sm transition shadow-sm"
+            >
+              Return to homepage
+            </Link>
+            <Link
+              href="/how-it-works"
+              className="rounded-[8px] border border-[#16231F]/20 bg-[#F4F6F3] hover:bg-[#16231F]/5 text-[#16231F] px-5 py-3 font-semibold text-sm transition"
+            >
+              See how a swap works
+            </Link>
+          </div>
+        </div>
+      </Container>
     </main>
   );
 }
