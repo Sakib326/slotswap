@@ -1,84 +1,38 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AppSidebar } from "@/components/dashboard/AppSidebar";
-import { AppTopBar } from "@/components/dashboard/AppTopBar";
+import React from "react";
+import { MockStoreProvider } from "@/lib/mock/store";
+import { ToastProvider } from "@/components/app/Toast";
+import {
+  StudentSidebar,
+  StudentTopBar,
+  MobileBottomTabs,
+} from "@/components/app/NavigationShell";
 
-interface AuthContextType {
-  user: any;
-  sessions: any[];
-  refreshData: () => Promise<void>;
-  loading: boolean;
-}
-
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  sessions: [],
-  refreshData: async () => {},
-  loading: true,
-});
-
-export const useAuth = () => useContext(AuthContext);
-
-export default function AppShellLayout({
+export default function StudentAppShellLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [sessions, setSessions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadData = async () => {
-    try {
-      const [uRes, sRes] = await Promise.all([
-        fetch("/api/users/me"),
-        fetch("/api/auth/sessions"),
-      ]);
-
-      if (!uRes.ok) {
-        router.push("/login");
-        return;
-      }
-
-      const userData = await uRes.json();
-      const sessionData = sRes.ok ? await sRes.json() : [];
-
-      setUser(userData);
-      setSessions(sessionData);
-    } catch {
-      router.push("/login");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F4F6F3] text-sm text-[#16231F]/60">
-        Loading SlotSwap...
-      </div>
-    );
-  }
-
   return (
-    <AuthContext.Provider value={{ user, sessions, refreshData: loadData, loading }}>
-      <div className="min-h-screen flex flex-col md:flex-row bg-[#F4F6F3] text-[#16231F]">
-        {/* Persistent Shared Sidebar across all internal pages */}
-        <AppSidebar user={user} />
+    <MockStoreProvider>
+      <ToastProvider>
+        <div className="min-h-screen flex bg-[#F4F6F3] text-[#16231F] font-body">
+          {/* Desktop Sidebar (>= lg) */}
+          <StudentSidebar />
 
-        {/* Right Shell with Persistent TopBar */}
-        <div className="flex-1 flex flex-col min-w-0">
-          <AppTopBar user={user} activeSessionCount={sessions.length} />
-          <main className="p-6 md:p-8 flex-1">{children}</main>
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col min-w-0 pb-16 lg:pb-0">
+            <StudentTopBar />
+            <main className="p-4 sm:p-6 lg:p-8 flex-1 max-w-[1200px] w-full mx-auto">
+              {children}
+            </main>
+          </div>
+
+          {/* Mobile Bottom Tabs (< lg) */}
+          <MobileBottomTabs />
         </div>
-      </div>
-    </AuthContext.Provider>
+      </ToastProvider>
+    </MockStoreProvider>
   );
 }

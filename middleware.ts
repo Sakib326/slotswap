@@ -4,8 +4,10 @@ import { verifySessionJwt } from "./src/lib/auth/jwt";
 export const config = {
   matcher: [
     "/dashboard/:path*",
+    "/routine/:path*",
     "/requests/:path*",
     "/swaps/:path*",
+    "/notifications/:path*",
     "/profile/:path*",
     "/admin/:path*",
     "/login",
@@ -14,6 +16,12 @@ export const config = {
 };
 
 export async function middleware(req: NextRequest) {
+  // DEV-ONLY BYPASS: controlled by MOCK_UI=true in .env.local
+  // TODO: remove when wiring real auth
+  if (process.env.MOCK_UI === "true") {
+    return NextResponse.next();
+  }
+
   const { pathname } = req.nextUrl;
   const cookie = req.cookies.get("slotswap_session");
   const token = cookie?.value;
@@ -22,8 +30,10 @@ export async function middleware(req: NextRequest) {
   const isAuthPage = pathname === "/login" || pathname === "/register";
   const isProtectedPage =
     pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/routine") ||
     pathname.startsWith("/requests") ||
     pathname.startsWith("/swaps") ||
+    pathname.startsWith("/notifications") ||
     pathname.startsWith("/profile");
   const isAdminPage = pathname.startsWith("/admin");
 

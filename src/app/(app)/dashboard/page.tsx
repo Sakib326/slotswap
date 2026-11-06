@@ -1,239 +1,210 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAuth } from "../layout";
+import Link from "next/link";
+import { useRequests, useRoutine, useSwaps } from "@/lib/mock/api";
+import { PageHeader } from "@/components/app/PageHeader";
+import { RoutineGrid } from "@/components/app/RoutineGrid";
+import { SwapChain } from "@/components/app/SwapChain";
+import { CountdownBar } from "@/components/app/CountdownBar";
+import { StatusTag } from "@/components/app/StatusTag";
+import { TableSkeleton } from "@/components/app/Skeleton";
+import { EmptyState, ErrorState } from "@/components/app/StateViews";
+import { getCourseColor } from "@/lib/mock/colors";
 import {
-  CalendarDays,
-  Clock,
+  ArrowRightLeft,
   ArrowRight,
+  Info,
+  X,
+  Plus,
   Sparkles,
-  CheckCircle2,
 } from "lucide-react";
 
 export default function DashboardPage() {
-  const { user, sessions } = useAuth();
-  const [swapConfirmed, setSwapConfirmed] = useState(false);
+  const { enrollments, loading: routineLoading, error: routineError } = useRoutine();
+  const { requests, loading: requestsLoading } = useRequests();
+  const { swaps, loading: swapsLoading } = useSwaps();
+
+  const [dismissNotice, setDismissNotice] = useState(false);
+
+  // Find priority swap awaiting confirmation
+  const urgentSwap = swaps.find(
+    (s) =>
+      s.status === "AWAITING_CONFIRMATION" &&
+      s.participants.some((p) => p.isYou && p.status === "WAITING")
+  );
+
+  const openRequestsCount = requests.filter((r) => r.status === "OPEN").length;
+  const awaitingSwapsCount = swaps.filter((s) => s.status === "AWAITING_CONFIRMATION").length;
+  const completedSwapsCount = swaps.filter((s) => s.status === "COMPLETED").length;
+
+  if (routineLoading || requestsLoading || swapsLoading) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Dashboard"
+          description="Overview of your routine, swap requests, and active cycles."
+        />
+        <TableSkeleton rows={4} />
+      </div>
+    );
+  }
+
+  if (routineError) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Dashboard"
+          description="Overview of your routine, swap requests, and active cycles."
+        />
+        <ErrorState message={routineError} onRetry={() => window.location.reload()} />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8 max-w-7xl text-left">
-      {/* Welcome & Quick Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-[#16231F]/15 rounded-[12px] p-4">
-          <span className="text-[11px] font-semibold text-[#16231F]/60 uppercase tracking-wider">
-            Enrolled Sections
-          </span>
-          <p className="text-2xl font-heading font-extrabold text-[#16231F] mt-1">
-            5 Sections
-          </p>
-          <p className="text-xs text-[#16231F]/60 mt-0.5">15.0 Credits · Routine synced</p>
-        </div>
+    <div className="space-y-6 text-left">
+      {/* Page Header with plain sentence-case summary */}
+      <PageHeader
+        title="Dashboard"
+        description={`${openRequestsCount} open requests, ${awaitingSwapsCount} swap waiting for you, ${completedSwapsCount} swaps completed.`}
+        action={
+          <Link
+            href="/requests/new"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[8px] bg-[#1D5B4A] hover:bg-[#164639] text-white text-xs font-semibold transition"
+          >
+            <Plus className="w-4 h-4" />
+            <span>New request</span>
+          </Link>
+        }
+      />
 
-        <div className="bg-white border border-[#16231F]/15 rounded-[12px] p-4">
-          <span className="text-[11px] font-semibold text-[#16231F]/60 uppercase tracking-wider">
-            Swap Requests
-          </span>
-          <p className="text-2xl font-heading font-extrabold text-[#1D5B4A] mt-1">
-            2 Active
-          </p>
-          <p className="text-xs text-[#16231F]/60 mt-0.5">1 Match waiting confirmation</p>
-        </div>
-
-        <div className="bg-white border border-[#16231F]/15 rounded-[12px] p-4">
-          <span className="text-[11px] font-semibold text-[#16231F]/60 uppercase tracking-wider">
-            Reliability Score
-          </span>
-          <p className="text-2xl font-heading font-extrabold text-[#1D5B4A] mt-1">
-            {user?.reliabilityScore ?? 100}%
-          </p>
-          <p className="text-xs text-[#1D5B4A] mt-0.5">High priority matching queue</p>
-        </div>
-
-        <div className="bg-white border border-[#16231F]/15 rounded-[12px] p-4">
-          <span className="text-[11px] font-semibold text-[#16231F]/60 uppercase tracking-wider">
-            Active Devices
-          </span>
-          <p className="text-2xl font-heading font-extrabold text-[#16231F] mt-1">
-            {sessions.length} Sessions
-          </p>
-          <p className="text-xs text-[#16231F]/60 mt-0.5">Primary: {sessions[0]?.device || "Desktop"}</p>
-        </div>
-      </div>
-
-      {/* Top Priority Action Banner: Match Pending Confirmation */}
-      <div className="bg-white border-2 border-[#1D5B4A] rounded-[12px] p-6 relative overflow-hidden shadow-sm">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-[4px] bg-[#C2E4CE] text-[#16231F] text-xs font-bold uppercase tracking-wider">
-                Action Required · 3-Way Cycle Match Found
-              </span>
-              <span className="text-xs font-semibold text-[#D9381E] flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" /> 01:24:15 remaining
-              </span>
-            </div>
-            <h2 className="text-xl font-heading font-bold text-[#16231F]">
-              Trade Proposal for CSE327 (Software Engineering)
-            </h2>
-            <div className="flex flex-wrap items-center gap-3 text-sm pt-1">
-              <span className="px-2.5 py-1 rounded-[4px] bg-[#F2C4C4] border border-[#D9381E]/30 text-xs font-semibold">
-                You Give: Sec 5
-              </span>
-              <ArrowRight className="w-4 h-4 text-[#16231F]/40" />
-              <span className="px-2.5 py-1 rounded-[4px] bg-[#C2E4CE] border border-[#1D5B4A]/30 text-xs font-semibold">
-                You Get: Sec 2
-              </span>
-              <span className="text-xs text-[#16231F]/60">
-                Cycle Partners: Rafi (Confirmed), Nila (Confirmed)
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 shrink-0">
-            {swapConfirmed ? (
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-[8px] bg-[#C2E4CE] text-[#1D5B4A] font-bold text-xs">
-                <CheckCircle2 className="w-4 h-4" /> Swap Confirmed! Coordinate in university portal
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={() => setSwapConfirmed(true)}
-                  className="rounded-[8px] bg-[#1D5B4A] hover:bg-[#164639] text-[#F4F6F3] px-6 py-2.5 text-xs font-bold transition shadow-sm cursor-pointer"
-                >
-                  Confirm Swap
-                </button>
-                <button
-                  onClick={() => alert("Swap declined. Your request has returned to the queue.")}
-                  className="rounded-[8px] border border-[#16231F]/20 hover:bg-[#16231F]/5 text-[#16231F] px-4 py-2.5 text-xs font-semibold transition cursor-pointer"
-                >
-                  Decline
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Routine & Requests Split Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left 7 Cols: Enrolled Routine Matrix */}
-        <div className="lg:col-span-7 bg-white border border-[#16231F]/15 rounded-[12px] p-6 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#16231F]/10">
-            <div className="flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-[#1D5B4A]" />
-              <h3 className="font-heading font-bold text-base text-[#16231F]">
-                Weekly Class Timetable
-              </h3>
-            </div>
-            <span className="text-[11px] font-semibold text-[#1D5B4A] bg-[#C2E4CE] px-2 py-0.5 rounded-[4px]">
-              0 Schedule Clashes
+      {/* Dismissible 3-Day Window Notice */}
+      {!dismissNotice && (
+        <div className="p-3.5 rounded-[10px] bg-white border border-[#16231F]/15 flex items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-[#16231F]">
+            <Info className="w-4 h-4 text-[#1D5B4A] shrink-0" />
+            <span>
+              <strong>Advising window active:</strong> Swap window closes in 3 days. Make sure all requests have backup sections selected for faster matching.
             </span>
           </div>
+          <button
+            onClick={() => setDismissNotice(true)}
+            className="p-1 rounded text-[#16231F]/40 hover:text-[#16231F]"
+            aria-label="Dismiss notice"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse min-w-[420px]">
-              <thead>
-                <tr className="border-b border-[#16231F]/10 text-[#16231F]/60 font-semibold">
-                  <th className="py-2">Time</th>
-                  <th className="py-2">Sun</th>
-                  <th className="py-2">Mon</th>
-                  <th className="py-2">Tue</th>
-                  <th className="py-2">Wed</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#16231F]/5">
-                <tr>
-                  <td className="py-3 font-mono text-[#16231F]/60">08:30</td>
-                  <td>-</td>
-                  <td className="py-2">
-                    <span className="px-2 py-1 rounded-[4px] bg-[#F5E39B] border border-[#16231F]/10 block font-semibold">
-                      MAT216 · Sec 3
-                    </span>
-                  </td>
-                  <td>-</td>
-                  <td className="py-2">
-                    <span className="px-2 py-1 rounded-[4px] bg-[#F5E39B] border border-[#16231F]/10 block font-semibold">
-                      MAT216 · Sec 3
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3 font-mono text-[#16231F]/60">10:00</td>
-                  <td className="py-2">
-                    <span className="px-2 py-1 rounded-[4px] bg-[#F2C4C4] border border-[#D9381E]/40 block font-semibold text-[#D9381E]">
-                      CSE327 · Sec 5 (Pending Swap)
-                    </span>
-                  </td>
-                  <td>-</td>
-                  <td className="py-2">
-                    <span className="px-2 py-1 rounded-[4px] bg-[#C2E4CE] border border-[#1D5B4A]/30 block font-semibold">
-                      CSE327 · Sec 2 (Target)
-                    </span>
-                  </td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <td className="py-3 font-mono text-[#16231F]/60">11:30</td>
-                  <td>-</td>
-                  <td className="py-2">
-                    <span className="px-2 py-1 rounded-[4px] bg-[#BCD7F2] border border-[#16231F]/10 block font-semibold">
-                      ENG201 · Sec 1
-                    </span>
-                  </td>
-                  <td>-</td>
-                  <td className="py-2">
-                    <span className="px-2 py-1 rounded-[4px] bg-[#BCD7F2] border border-[#16231F]/10 block font-semibold">
-                      ENG201 · Sec 1
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      {/* Top Priority Block: Waiting for your confirmation */}
+      {urgentSwap ? (
+        <div className="p-6 rounded-[12px] bg-white border-2 border-[#1D5B4A] space-y-4 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#16231F]/10">
+            <div>
+              <h2 className="font-heading font-extrabold text-lg text-[#16231F]">
+                Waiting for your confirmation
+              </h2>
+              <p className="text-xs text-[#16231F]/70 mt-0.5">
+                A clash-free {urgentSwap.type === "THREE_WAY" ? "3-way" : "2-way"} cycle was found for {urgentSwap.courseCode}.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <CountdownBar expiresAt={urgentSwap.expiresAt} />
+              <Link
+                href={`/swaps/${urgentSwap.id}`}
+                className="px-4 py-2 rounded-[8px] bg-[#1D5B4A] hover:bg-[#164639] text-white text-xs font-semibold transition"
+              >
+                Review swap
+              </Link>
+            </div>
           </div>
+
+          <SwapChain participants={urgentSwap.participants} />
+        </div>
+      ) : (
+        <div className="p-4 rounded-[10px] bg-white border border-[#16231F]/15 flex items-center justify-between text-xs text-[#16231F]/70">
+          <span>Nothing waiting for you right now. We notify you the moment a cycle is verified.</span>
+          <Link href="/requests" className="text-[#1D5B4A] font-semibold underline">
+            View requests
+          </Link>
+        </div>
+      )}
+
+      {/* Asymmetric Split: Compact Routine (8/12) + Requests List (4/12) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Compact Routine (8/12) */}
+        <div className="lg:col-span-8 space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading font-bold text-base text-[#16231F]">
+              My routine
+            </h2>
+            <Link
+              href="/routine"
+              className="text-xs text-[#1D5B4A] hover:underline font-semibold"
+            >
+              Open full routine
+            </Link>
+          </div>
+
+          <RoutineGrid enrollments={enrollments} compact={true} />
         </div>
 
-        {/* Right 5 Cols: Active Swap Queues */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white border border-[#16231F]/15 rounded-[12px] p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#16231F]/10">
-              <h3 className="font-heading font-bold text-base text-[#16231F]">
-                My Swap Requests
-              </h3>
-              <button className="text-xs font-semibold text-[#1D5B4A] hover:underline cursor-pointer">
-                + New Swap
-              </button>
-            </div>
+        {/* Requests List (4/12) */}
+        <div className="lg:col-span-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading font-bold text-base text-[#16231F]">
+              Active requests
+            </h2>
+            <Link
+              href="/requests"
+              className="text-xs text-[#1D5B4A] hover:underline font-semibold"
+            >
+              View all
+            </Link>
+          </div>
 
-            <div className="space-y-3">
-              <div className="p-3 rounded-[8px] border border-[#16231F]/10 bg-[#F4F6F3] text-xs space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-[#16231F]">CSE327</span>
-                  <span className="px-2 py-0.5 rounded-[4px] bg-[#C2E4CE] text-[#16231F] font-bold text-[10px]">
-                    MATCHED (3-WAY)
-                  </span>
-                </div>
-                <p className="text-[#16231F]/70">
-                  Holding: <strong>Sec 5</strong> → Target: <strong>Sec 2, Sec 7</strong>
-                </p>
-              </div>
+          <div className="space-y-2">
+            {requests.slice(0, 3).map((req) => {
+              const holdColor = getCourseColor(req.heldSection.courseCode);
 
-              <div className="p-3 rounded-[8px] border border-[#16231F]/10 bg-[#F4F6F3] text-xs space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-[#16231F]">MAT216</span>
-                  <span className="px-2 py-0.5 rounded-[4px] bg-[#F5E39B] text-[#16231F] font-bold text-[10px]">
-                    SEARCHING
-                  </span>
-                </div>
-                <p className="text-[#16231F]/70">
-                  Holding: <strong>Sec 3</strong> → Target: <strong>Sec 1</strong>
-                </p>
-                <div className="pt-2 border-t border-[#16231F]/10 flex items-start gap-1.5 text-[11px] text-[#1D5B4A]">
-                  <Sparkles className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  <span>
-                    Suggestion: Accept Sec 4 as a backup to match instantly with 2 students.
-                  </span>
-                </div>
-              </div>
-            </div>
+              return (
+                <Link
+                  key={req.id}
+                  href={`/requests/${req.id}`}
+                  className="p-3.5 rounded-[10px] bg-white border border-[#16231F]/15 hover:border-[#1D5B4A] transition block space-y-2.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`px-2 py-0.5 rounded-[4px] border ${holdColor.bg} ${holdColor.border} font-bold text-xs text-[#16231F] tabular-nums`}
+                    >
+                      {req.heldSection.courseCode} Sec {req.heldSection.sectionNumber}
+                    </span>
+                    <StatusTag status={req.status} />
+                  </div>
+
+                  <div className="text-xs text-[#16231F]/70 flex items-center gap-1.5 flex-wrap">
+                    <span>Wants:</span>
+                    {req.wantedSections.map((sec) => (
+                      <span
+                        key={sec.id}
+                        className="px-1.5 py-0.2 rounded bg-[#F4F6F3] border border-[#16231F]/15 font-semibold text-[#16231F] text-[11px] tabular-nums"
+                      >
+                        Sec {sec.sectionNumber}
+                      </span>
+                    ))}
+                  </div>
+
+                  {req.suggestion && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-[#1D5B4A] font-semibold">
+                      <Sparkles className="w-3 h-3 shrink-0" />
+                      <span>Match suggestion available</span>
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
