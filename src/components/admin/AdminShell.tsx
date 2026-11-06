@@ -19,14 +19,26 @@ import {
   Menu,
   X,
   ExternalLink,
+  LogOut,
 } from "lucide-react";
 import { useAdminStore } from "@/lib/mock/admin-store";
 import { useToast } from "@/components/app/Toast";
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { state, dispatch } = useAdminStore();
   const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore network errors
+    }
+    sessionStorage.clear();
+    router.push("/login");
+  };
 
   const groups = [
     {
@@ -147,56 +159,92 @@ export function AdminSidebar() {
             {state.currentAdmin.email} · Staff
           </p>
         </div>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-[8px] text-xs font-semibold text-[#D9381E] hover:bg-[#F2C4C4]/30 transition cursor-pointer"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Log out</span>
+        </button>
       </div>
     </aside>
   );
 }
 
-export function AdminTopBar() {
+export function AdminTopBar({ onMenuClick }: { onMenuClick?: () => void }) {
   const router = useRouter();
   const { state } = useAdminStore();
   const { toast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore network errors
+    }
+    sessionStorage.clear();
+    router.push("/login");
+  };
+
   const activeTerm = state.terms.find((t) => t.status === "ACTIVE") || state.terms[0];
 
   return (
-    <header className="h-14 border-b border-[#16231F]/15 bg-white px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20 text-left">
-      {/* Left: Term & Window Status Chip */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <span className="text-xs font-bold text-[#16231F]">
+    <header className="h-14 border-b border-[#16231F]/15 bg-white px-3 sm:px-6 flex items-center justify-between sticky top-0 z-20 text-left gap-2">
+      {/* Left: Mobile hamburger (< lg) & Term / Window Status Chip */}
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+        {onMenuClick && (
+          <button
+            type="button"
+            onClick={onMenuClick}
+            className="lg:hidden p-1.5 -ml-1 rounded-[6px] text-[#16231F] hover:bg-[#16231F]/5 shrink-0"
+            aria-label="Open navigation menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
+        <span className="text-xs font-bold text-[#16231F] shrink-0 truncate max-w-[80px] sm:max-w-none">
           {activeTerm?.name || "Fall 2026"}
         </span>
         <span className="text-[#16231F]/30 text-xs hidden sm:inline">|</span>
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-xs font-semibold ${
+          className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[11px] sm:text-xs font-semibold shrink-0 ${
             activeTerm?.swapWindowOpen
               ? "bg-[#C2E4CE] text-[#1D5B4A]"
               : "bg-[#F2C4C4] text-[#D9381E]"
           }`}
         >
           <span
-            className={`w-1.5 h-1.5 rounded-full ${
+            className={`w-1.5 h-1.5 rounded-full shrink-0 ${
               activeTerm?.swapWindowOpen ? "bg-[#1D5B4A]" : "bg-[#D9381E]"
             }`}
           />
-          <span>{activeTerm?.swapWindowOpen ? "Window open, closes in 3 days" : "Window closed"}</span>
+          <span className="hidden sm:inline">
+            {activeTerm?.swapWindowOpen ? "Window open, closes in 3 days" : "Window closed"}
+          </span>
+          <span className="sm:hidden">
+            {activeTerm?.swapWindowOpen ? "Open" : "Closed"}
+          </span>
         </span>
       </div>
 
       {/* Right: Switch Role & Menu */}
-      <div className="flex items-center gap-3">
-        {/* Preview as Student */}
+      <div className="flex items-center gap-2 shrink-0">
+        {/* Preview as Student - icon only on mobile, text on sm+ */}
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-[#F4F6F3] border border-[#16231F]/15 hover:border-[#1D5B4A] text-xs font-semibold text-[#16231F] transition"
+          title="Preview as student"
+          className="inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-[6px] bg-[#F4F6F3] border border-[#16231F]/15 hover:border-[#1D5B4A] text-xs font-semibold text-[#16231F] transition shrink-0"
         >
-          <ExternalLink className="w-3.5 h-3.5 text-[#1D5B4A]" />
-          <span>Preview as student</span>
+          <ExternalLink className="w-3.5 h-3.5 text-[#1D5B4A] shrink-0" />
+          <span className="hidden md:inline">Preview as student</span>
+          <span className="hidden sm:inline md:hidden">Student view</span>
         </Link>
 
         {/* User avatar menu */}
-        <div className="relative">
+        <div className="relative shrink-0">
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -219,9 +267,10 @@ export function AdminTopBar() {
               </Link>
               <button
                 type="button"
-                onClick={() => toast("Admin signed out (Mock mode)")}
-                className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#D9381E] hover:bg-[#F2C4C4]/20"
+                onClick={handleLogout}
+                className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#D9381E] hover:bg-[#F2C4C4]/20 cursor-pointer"
               >
+                <LogOut className="w-3.5 h-3.5" />
                 <span>Log out</span>
               </button>
             </div>

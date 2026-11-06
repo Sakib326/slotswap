@@ -22,25 +22,9 @@ export default function AdminLayout({
 
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col min-w-0">
-            {/* Mobile Header with Hamburger (< lg) */}
-            <div className="lg:hidden flex items-center justify-between px-4 h-12 bg-white border-b border-[#16231F]/15">
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(true)}
-                className="p-1 rounded text-[#16231F]"
-                aria-label="Open navigation menu"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-              <span className="font-heading font-bold text-sm text-[#16231F]">
-                SlotSwap Admin
-              </span>
-              <div className="w-5" />
-            </div>
+            <AdminTopBar onMenuClick={() => setMobileMenuOpen(true)} />
 
-            <AdminTopBar />
-
-            <main className="p-4 sm:p-6 lg:p-8 flex-1 max-w-[1240px] w-full mx-auto">
+            <main className="p-3 sm:p-6 lg:p-8 flex-1 max-w-[1240px] w-full mx-auto">
               {children}
             </main>
           </div>

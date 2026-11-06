@@ -6,13 +6,20 @@ import { prisma } from "@/lib/prisma";
 
 
 export const POST = handle(async () => {
-  const { session } = await requireUser();
+  try {
+    const { session } = await requireUser();
 
-  // Revoke current session in DB
-  await prisma.session.update({
-    where: { id: session.id },
-    data: { revokedAt: new Date() },
-  });
+    // Revoke current session in DB if exists
+    if (session?.id) {
+      await prisma.session.update({
+        where: { id: session.id },
+        data: { revokedAt: new Date() },
+      });
+    }
+  } catch {
+    // If not authenticated or in mock mode without valid DB session,
+    // still proceed to clear the session cookie cleanly
+  }
 
   // Clear session cookie
   await clearSessionCookie();

@@ -42,9 +42,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${bricolage.variable} ${plexSans.variable} ${hindSiliguri.variable}`}
     >
-      <body className="min-h-screen flex flex-col bg-paper text-ink font-body antialiased">
+      <body
+        suppressHydrationWarning
+        className="min-h-screen flex flex-col bg-paper text-ink font-body antialiased"
+      >
         <NextTopLoader
           color="#1D5B4A"
           initialPosition={0.08}

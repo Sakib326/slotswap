@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -18,9 +18,20 @@ import { useToast } from "./Toast";
 
 export function StudentSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { unreadCount } = useNotifications();
   const { student, resetStore } = useProfile();
   const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore network errors
+    }
+    sessionStorage.clear();
+    router.push("/login");
+  };
 
   const navItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -119,35 +130,60 @@ export function StudentSidebar() {
             {student.studentId} · {student.department}
           </p>
         </div>
+
+        {/* Log Out Button */}
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-[8px] text-xs font-semibold text-[#D9381E] hover:bg-[#F2C4C4]/30 transition cursor-pointer"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Log out</span>
+        </button>
       </div>
     </aside>
   );
 }
 
 export function StudentTopBar() {
+  const router = useRouter();
   const { unreadCount } = useNotifications();
   const { student } = useProfile();
   const { toast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore network errors
+    }
+    sessionStorage.clear();
+    router.push("/login");
+  };
+
   return (
-    <header className="h-14 border-b border-[#16231F]/15 bg-white px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20 text-left">
+    <header className="h-14 border-b border-[#16231F]/15 bg-white px-3 sm:px-6 flex items-center justify-between sticky top-0 z-20 text-left gap-2">
       {/* Left: Term & Swap window info */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <span className="text-xs font-bold text-[#16231F]">Fall 2026</span>
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+        <span className="text-xs font-bold text-[#16231F] shrink-0 truncate max-w-[80px] sm:max-w-none">
+          Fall 2026
+        </span>
         <span className="text-[#16231F]/30 text-xs hidden sm:inline">|</span>
-        <span className="text-xs text-[#16231F]/70 hidden sm:inline">
-          Swap window open, closes in 3 days
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] bg-[#C2E4CE] text-[#1D5B4A] text-[11px] sm:text-xs font-semibold shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#1D5B4A] shrink-0" />
+          <span className="hidden sm:inline">Swap window open, closes in 3 days</span>
+          <span className="sm:hidden">Window open</span>
         </span>
       </div>
 
       {/* Right: Bell & User Menu */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         {/* Notification Bell */}
         <Link
           href="/notifications"
           aria-label={`Notifications, ${unreadCount} unread`}
-          className="relative p-2 rounded-[6px] text-[#16231F]/70 hover:bg-[#16231F]/5 transition"
+          className="relative p-2 rounded-[6px] text-[#16231F]/70 hover:bg-[#16231F]/5 transition shrink-0"
         >
           <Bell className="w-4 h-4" />
           {unreadCount > 0 && (
@@ -156,17 +192,17 @@ export function StudentTopBar() {
         </Link>
 
         {/* User dropdown menu */}
-        <div className="relative">
+        <div className="relative shrink-0">
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
             className="flex items-center gap-2 p-1.5 rounded-[6px] hover:bg-[#16231F]/5 transition"
             aria-expanded={menuOpen}
           >
-            <div className="w-7 h-7 rounded-full bg-[#C2E4CE] text-[#1D5B4A] font-bold text-xs flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-[#C2E4CE] text-[#1D5B4A] font-bold text-xs flex items-center justify-center shrink-0">
               TH
             </div>
-            <span className="text-xs font-semibold text-[#16231F] hidden md:inline">
+            <span className="text-xs font-semibold text-[#16231F] hidden sm:inline truncate max-w-[120px]">
               {student.name}
             </span>
           </button>
@@ -185,8 +221,8 @@ export function StudentTopBar() {
               </Link>
               <button
                 type="button"
-                onClick={() => toast("Signed out (Mock mode)")}
-                className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#D9381E] hover:bg-[#F2C4C4]/20"
+                onClick={handleLogout}
+                className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#D9381E] hover:bg-[#F2C4C4]/20 cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Log out</span>
