@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, IBM_Plex_Sans, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
+import NextTopLoader from "nextjs-toploader";
 import StoreProvider from "@/lib/redux/StoreProvider";
 
 const bricolage = Bricolage_Grotesque({
@@ -44,6 +45,17 @@ export default function RootLayout({
       className={`${bricolage.variable} ${plexSans.variable} ${hindSiliguri.variable}`}
     >
       <body className="min-h-screen flex flex-col bg-paper text-ink font-body antialiased">
+        <NextTopLoader
+          color="#1D5B4A"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #1D5B4A,0 0 5px #1D5B4A"
+        />
         <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
