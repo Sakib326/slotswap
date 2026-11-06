@@ -4,6 +4,7 @@ import { forgotPasswordSchema } from "@/lib/validators/auth";
 import { prisma } from "@/lib/prisma";
 import { generateRawToken, hashToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/mail";
+import { buildRoutineEmailTemplate } from "@/lib/email-templates";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { env } from "@/lib/env";
 
@@ -46,11 +47,34 @@ export const POST = handle(async (req: NextRequest) => {
     ]);
 
     const resetUrl = `${env.APP_URL}/reset-password?token=${rawToken}`;
+    const html = buildRoutineEmailTemplate({
+      preheader: "Reset your SlotSwap password",
+      badge: {
+        text: "SECURITY ALERT",
+        bg: "#F5E39B",
+        color: "#16231F",
+      },
+      title: "Password reset request",
+      recipientName: user.profile?.name || "Student",
+      introText:
+        "We received a request to reset the password for your SlotSwap account. Click the button below to choose a new password.",
+      highlightBox: {
+        label: "Security notice",
+        value: "Expires in 1 hour",
+        details: "If you did not request a password reset, you can safely ignore this message.",
+      },
+      cta: {
+        label: "Reset Password",
+        url: resetUrl,
+      },
+      footerNote: "For security, this password reset link will expire in 60 minutes.",
+    });
+
     await sendEmail({
       to: user.email,
       subject: "Reset your password - SlotSwap",
       text: `Hello ${user.profile?.name || "Student"},\n\nYou requested to reset your password. Click the link below:\n${resetUrl}\n\nThis link is valid for 1 hour. If you didn't request this, ignore this email.`,
-      html: `<p>Hello ${user.profile?.name || "Student"},</p><p>You requested to reset your password. Click the link below:</p><p><a href="${resetUrl}">Reset Password</a></p><p>This link is valid for 1 hour. If you didn't request this, ignore this email.</p>`,
+      html,
     });
   }
 

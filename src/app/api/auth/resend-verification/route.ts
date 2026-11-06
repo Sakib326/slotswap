@@ -4,6 +4,7 @@ import { resendVerificationSchema } from "@/lib/validators/auth";
 import { prisma } from "@/lib/prisma";
 import { generateRawToken, hashToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/mail";
+import { buildRoutineEmailTemplate } from "@/lib/email-templates";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { env } from "@/lib/env";
 
@@ -46,11 +47,29 @@ export const POST = handle(async (req: NextRequest) => {
     ]);
 
     const verifyUrl = `${env.APP_URL}/api/auth/verify-email?token=${rawToken}`;
+    const html = buildRoutineEmailTemplate({
+      preheader: "Fresh verification link for SlotSwap",
+      badge: {
+        text: "ACCOUNT ACTIVATION",
+        bg: "#C2E4CE",
+        color: "#1D5B4A",
+      },
+      title: "Activate your SlotSwap account",
+      recipientName: user.profile?.name || "Student",
+      introText:
+        "You requested a new email verification link. Please click the button below to verify your email and activate your access to the course swapping portal.",
+      cta: {
+        label: "Verify Email Address",
+        url: verifyUrl,
+      },
+      footerNote: "This link is valid for 24 hours. If you did not request this, please disregard.",
+    });
+
     await sendEmail({
       to: user.email,
       subject: "Verify your email - SlotSwap",
       text: `Hello ${user.profile?.name || "Student"},\n\nPlease verify your email by clicking the link below:\n${verifyUrl}\n\nThis link expires in 24 hours.`,
-      html: `<p>Hello ${user.profile?.name || "Student"},</p><p>Please verify your email by clicking the link below:</p><p><a href="${verifyUrl}">Verify My Email</a></p><p>This link expires in 24 hours.</p>`,
+      html,
     });
   }
 

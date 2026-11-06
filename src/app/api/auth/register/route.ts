@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth/password";
 import { generateRawToken, hashToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/mail";
+import { buildRoutineEmailTemplate } from "@/lib/email-templates";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { AppError } from "@/lib/errors";
 import { env } from "@/lib/env";
@@ -97,11 +98,34 @@ export const POST = handle(async (req: NextRequest) => {
   });
 
   const verifyUrl = `${env.APP_URL}/api/auth/verify-email?token=${rawToken}`;
+  const html = buildRoutineEmailTemplate({
+    preheader: "Activate your SlotSwap account",
+    badge: {
+      text: "EMAIL VERIFICATION",
+      bg: "#C2E4CE",
+      color: "#1D5B4A",
+    },
+    title: "Verify your university email address",
+    recipientName: parsed.name,
+    introText:
+      "Welcome to SlotSwap! You have registered with your university student email. Please confirm your email to activate your account and start swapping course sections.",
+    highlightBox: {
+      label: "Registered Student ID",
+      value: parsed.studentId,
+      details: "Link expires in 24 hours.",
+    },
+    cta: {
+      label: "Verify Email Address",
+      url: verifyUrl,
+    },
+    footerNote: "If you did not create a SlotSwap account, you can safely ignore this email.",
+  });
+
   await sendEmail({
     to: parsed.email,
     subject: "Verify your email - SlotSwap",
     text: `Welcome to SlotSwap, ${parsed.name}!\n\nPlease verify your email by clicking the link below:\n${verifyUrl}\n\nThis link expires in 24 hours.`,
-    html: `<p>Welcome to SlotSwap, ${parsed.name}!</p><p>Please verify your email by clicking the link below:</p><p><a href="${verifyUrl}">Verify My Email</a></p><p>This link expires in 24 hours.</p>`,
+    html,
   });
 
   return NextResponse.json(

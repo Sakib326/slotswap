@@ -106,10 +106,10 @@ export default function SwapDetailPage({
       )}
 
       {/* Main Grid: Swap Chain + Before/After Routine Comparison */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left: Chain Participants (7/12) */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="p-5 rounded-[12px] bg-white border border-[#16231F]/15 space-y-4">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+        {/* Left: Chain Participants (7/12 on xl, full width on < xl) */}
+        <div className="xl:col-span-7 space-y-6 min-w-0">
+          <div className="p-4 sm:p-5 rounded-[12px] bg-white border border-[#16231F]/15 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-[#16231F]/10">
               <h2 className="font-heading font-bold text-base text-[#16231F]">
                 Cycle participants
@@ -196,9 +196,9 @@ export default function SwapDetailPage({
           </div>
         </div>
 
-        {/* Right: Your Change - Before vs After (5/12) */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="p-5 rounded-[12px] bg-white border border-[#16231F]/15 space-y-3">
+        {/* Right: Your Change - Before vs After (5/12 on xl, full width on < xl) */}
+        <div className="xl:col-span-5 space-y-4 min-w-0">
+          <div className="p-4 sm:p-5 rounded-[12px] bg-white border border-[#16231F]/15 space-y-3">
             <h2 className="font-heading font-bold text-sm text-[#16231F]">
               Your routine impact
             </h2>
