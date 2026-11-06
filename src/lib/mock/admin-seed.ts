@@ -1,0 +1,537 @@
+import {
+  AdminCourse,
+  AdminUser,
+  AuditEntry,
+  Department,
+  SystemSettingsState,
+  Term,
+} from "@/types/admin";
+import { Section, SwapChain, SwapRequest } from "@/types/domain";
+import { catalogSections, createInitialSwaps, initialRequests } from "./seed";
+import { getCourseColor } from "./colors";
+
+// Current logged in admin
+export const currentAdminUser: AdminUser = {
+  id: "admin-nusrat",
+  name: "Nusrat Jahan",
+  email: "nusrat.jahan@northsouth.edu",
+  isEmailVerified: true,
+  studentId: undefined,
+  departmentCode: "CSE",
+  batch: "Staff",
+  role: "ADMIN",
+  status: "ACTIVE",
+  phone: "+8801811223344",
+  contactVisibility: "HIDDEN",
+  reliability: 100,
+  swapsCompleted: 0,
+  swapsCancelled: 0,
+  preferredDays: ["SUN", "MON", "TUE", "WED", "THU"],
+  preferredTimeRange: "ANY",
+  allowMultiWaySwaps: true,
+  notifyByEmail: true,
+  notifyInApp: true,
+  createdAt: "2025-01-10T08:00:00.000Z",
+  lastLoginAt: new Date().toISOString(),
+  sessions: [
+    {
+      id: "sess-nusrat-1",
+      device: "MacBook Pro · Chrome",
+      ip: "103.114.98.24",
+      isCurrent: true,
+      createdAt: new Date(Date.now() - 4 * 3600000).toISOString(),
+      lastActiveAt: new Date().toISOString(),
+    },
+  ],
+};
+
+// 6 Departments
+export const initialDepartments: Department[] = [
+  { id: "dept-cse", code: "CSE", name: "Computer Science & Engineering", courseCount: 14, studentCount: 28 },
+  { id: "dept-eee", code: "EEE", name: "Electrical & Electronic Engineering", courseCount: 6, studentCount: 8 },
+  { id: "dept-bba", code: "BBA", name: "Bachelor of Business Administration", courseCount: 5, studentCount: 5 },
+  { id: "dept-eng", code: "ENG", name: "English & Modern Languages", courseCount: 2, studentCount: 3 },
+  { id: "dept-mat", code: "MAT", name: "Mathematics & Physics", courseCount: 3, studentCount: 4 },
+  { id: "dept-phy", code: "PHY", name: "Physical Sciences", courseCount: 2, studentCount: 2 },
+];
+
+// 3 Terms
+export const initialTerms: Term[] = [
+  {
+    id: "term-fall-2026",
+    name: "Fall 2026",
+    status: "ACTIVE",
+    startDate: "2026-09-01",
+    endDate: "2026-12-24",
+    swapWindowOpen: true,
+    swapWindowOpensAt: "2026-09-05T08:00:00.000Z",
+    swapWindowClosesAt: new Date(Date.now() + 3 * 86400000).toISOString(), // Closes in 3 days
+  },
+  {
+    id: "term-summer-2026",
+    name: "Summer 2026",
+    status: "ENDED",
+    startDate: "2026-05-15",
+    endDate: "2026-08-20",
+    swapWindowOpen: false,
+    swapWindowOpensAt: "2026-05-20T08:00:00.000Z",
+    swapWindowClosesAt: "2026-05-27T18:00:00.000Z",
+  },
+  {
+    id: "term-spring-2026",
+    name: "Spring 2026",
+    status: "ENDED",
+    startDate: "2026-01-10",
+    endDate: "2026-04-28",
+    swapWindowOpen: false,
+    swapWindowOpensAt: "2026-01-15T08:00:00.000Z",
+    swapWindowClosesAt: "2026-01-22T18:00:00.000Z",
+  },
+];
+
+// Initial Courses (30 courses)
+export const initialCourses: AdminCourse[] = [
+  { id: "c-cse327", code: "CSE327", title: "Software Engineering", departmentCode: "CSE", credits: 3, sectionsCount: 6, openRequestsCount: 14, color: "marker-blue" },
+  { id: "c-cse311", code: "CSE311", title: "Database Systems", departmentCode: "CSE", credits: 3, sectionsCount: 3, openRequestsCount: 8, color: "marker-yellow" },
+  { id: "c-cse215", code: "CSE215", title: "Programming Language II (Java)", departmentCode: "CSE", credits: 3, sectionsCount: 5, openRequestsCount: 6, color: "marker-mint" },
+  { id: "c-cse225", code: "CSE225", title: "Data Structures & Algorithms", departmentCode: "CSE", credits: 3, sectionsCount: 6, openRequestsCount: 11, color: "marker-peach" },
+  { id: "c-cse231", code: "CSE231", title: "Digital Logic Design", departmentCode: "CSE", credits: 3, sectionsCount: 4, openRequestsCount: 3, color: "marker-lilac" },
+  { id: "c-cse331", code: "CSE331", title: "Microprocessors & Interfacing", departmentCode: "CSE", credits: 3, sectionsCount: 4, openRequestsCount: 5, color: "marker-blue" },
+  { id: "c-cse332", code: "CSE332", title: "Computer Organization & Arch", departmentCode: "CSE", credits: 3, sectionsCount: 4, openRequestsCount: 2, color: "marker-pink" },
+  { id: "c-cse373", code: "CSE373", title: "Design & Analysis of Algorithms", departmentCode: "CSE", credits: 3, sectionsCount: 5, openRequestsCount: 9, color: "marker-mint" },
+  { id: "c-cse425", code: "CSE425", title: "Concepts of Programming Languages", departmentCode: "CSE", credits: 3, sectionsCount: 3, openRequestsCount: 1, color: "marker-yellow" },
+  { id: "c-cse465", code: "CSE465", title: "Artificial Intelligence", departmentCode: "CSE", credits: 3, sectionsCount: 4, openRequestsCount: 12, color: "marker-blue" },
+  { id: "c-cse470", code: "CSE470", title: "Compiler Construction", departmentCode: "CSE", credits: 3, sectionsCount: 2, openRequestsCount: 0, color: "marker-peach" },
+  { id: "c-cse499", code: "CSE499", title: "Senior Design Project", departmentCode: "CSE", credits: 3, sectionsCount: 3, openRequestsCount: 0, color: "marker-lilac" },
+
+  // EEE
+  { id: "c-eee141", code: "EEE141", title: "Electrical Circuits I", departmentCode: "EEE", credits: 3, sectionsCount: 4, openRequestsCount: 4, color: "marker-pink" },
+  { id: "c-eee154", code: "EEE154", title: "Engineering Electromagnetics", departmentCode: "EEE", credits: 3, sectionsCount: 3, openRequestsCount: 2, color: "marker-yellow" },
+  { id: "c-eee241", code: "EEE241", title: "Electrical Circuits II", departmentCode: "EEE", credits: 3, sectionsCount: 3, openRequestsCount: 1, color: "marker-blue" },
+  { id: "c-eee311", code: "EEE311", title: "Electronic Devices & Circuits", departmentCode: "EEE", credits: 3, sectionsCount: 4, openRequestsCount: 5, color: "marker-mint" },
+  { id: "c-eee342", code: "EEE342", title: "Signals and Systems", departmentCode: "EEE", credits: 3, sectionsCount: 3, openRequestsCount: 3, color: "marker-peach" },
+
+  // BBA
+  { id: "c-act201", code: "ACT201", title: "Financial Accounting", departmentCode: "BBA", credits: 3, sectionsCount: 5, openRequestsCount: 4, color: "marker-yellow" },
+  { id: "c-bus101", code: "BUS101", title: "Introduction to Business", departmentCode: "BBA", credits: 3, sectionsCount: 4, openRequestsCount: 1, color: "marker-blue" },
+  { id: "c-fin254", code: "FIN254", title: "Managerial Finance", departmentCode: "BBA", credits: 3, sectionsCount: 4, openRequestsCount: 6, color: "marker-mint" },
+  { id: "c-mkt202", code: "MKT202", title: "Principles of Marketing", departmentCode: "BBA", credits: 3, sectionsCount: 4, openRequestsCount: 3, color: "marker-pink" },
+  { id: "c-mgt314", code: "MGT314", title: "Organizational Behavior", departmentCode: "BBA", credits: 3, sectionsCount: 3, openRequestsCount: 2, color: "marker-lilac" },
+
+  // ENG
+  { id: "c-eng102", code: "ENG102", title: "Advanced Reading & Writing", departmentCode: "ENG", credits: 3, sectionsCount: 5, openRequestsCount: 2, color: "marker-blue" },
+  { id: "c-eng201", code: "ENG201", title: "Technical Writing", departmentCode: "ENG", credits: 3, sectionsCount: 3, openRequestsCount: 5, color: "marker-mint" },
+
+  // MAT & PHY
+  { id: "c-mat116", code: "MAT116", title: "Pre-calculus", departmentCode: "MAT", credits: 3, sectionsCount: 6, openRequestsCount: 2, color: "marker-peach" },
+  { id: "c-mat120", code: "MAT120", title: "Calculus I", departmentCode: "MAT", credits: 3, sectionsCount: 6, openRequestsCount: 7, color: "marker-yellow" },
+  { id: "c-mat216", code: "MAT216", title: "Linear Algebra & Complex Variables", departmentCode: "MAT", credits: 3, sectionsCount: 3, openRequestsCount: 4, color: "marker-pink" },
+  { id: "c-phy107", code: "PHY107", title: "Physics I (Mechanics)", departmentCode: "PHY", credits: 3, sectionsCount: 4, openRequestsCount: 3, color: "marker-blue" },
+  { id: "c-phy112", code: "PHY112", title: "Physics II (Electricity & Magnetism)", departmentCode: "PHY", credits: 3, sectionsCount: 2, openRequestsCount: 4, color: "marker-lilac" },
+];
+
+// Initial Users (48 deterministic users)
+export const initialAdminUsers: AdminUser[] = [
+  // Nusrat Jahan (Current Admin)
+  currentAdminUser,
+
+  // Admin 2: Dr. Kazi Shafiq
+  {
+    id: "admin-kazi",
+    name: "Dr. Kazi Shafiq",
+    email: "shafiq.kazi@northsouth.edu",
+    isEmailVerified: true,
+    departmentCode: "CSE",
+    batch: "Faculty",
+    role: "ADMIN",
+    status: "ACTIVE",
+    phone: "+8801711002233",
+    contactVisibility: "HIDDEN",
+    reliability: 100,
+    swapsCompleted: 0,
+    swapsCancelled: 0,
+    preferredDays: ["SUN", "TUE"],
+    preferredTimeRange: "ANY",
+    allowMultiWaySwaps: true,
+    notifyByEmail: true,
+    notifyInApp: true,
+    createdAt: "2024-08-01T10:00:00.000Z",
+    lastLoginAt: "2026-11-06T14:30:00.000Z",
+    sessions: [],
+  },
+
+  // Admin 3: Sabrina Anwar
+  {
+    id: "admin-sabrina",
+    name: "Sabrina Anwar",
+    email: "sabrina.anwar@northsouth.edu",
+    isEmailVerified: true,
+    departmentCode: "BBA",
+    batch: "Staff",
+    role: "ADMIN",
+    status: "ACTIVE",
+    phone: "+8801919887766",
+    contactVisibility: "HIDDEN",
+    reliability: 98,
+    swapsCompleted: 0,
+    swapsCancelled: 0,
+    preferredDays: ["SUN", "MON", "WED"],
+    preferredTimeRange: "MORNING",
+    allowMultiWaySwaps: true,
+    notifyByEmail: true,
+    notifyInApp: true,
+    createdAt: "2025-02-12T09:15:00.000Z",
+    lastLoginAt: "2026-11-05T11:20:00.000Z",
+    sessions: [],
+  },
+
+  // Student 1: Tanvir Hasan (From student seed)
+  {
+    id: "user-tanvir",
+    name: "Tanvir Hasan",
+    email: "tanvir.hasan@northsouth.edu",
+    isEmailVerified: true,
+    studentId: "2024-1-60-123",
+    departmentCode: "CSE",
+    batch: "Fall 2024",
+    role: "STUDENT",
+    status: "ACTIVE",
+    phone: "+8801712345678",
+    contactVisibility: "AFTER_CONFIRMATION",
+    reliability: 92,
+    swapsCompleted: 4,
+    swapsCancelled: 1,
+    preferredDays: ["SUN", "TUE", "THU"],
+    preferredTimeRange: "MORNING",
+    allowMultiWaySwaps: true,
+    notifyByEmail: true,
+    notifyInApp: true,
+    createdAt: "2024-09-02T10:00:00.000Z",
+    lastLoginAt: new Date(Date.now() - 45 * 60000).toISOString(),
+    sessions: [
+      {
+        id: "sess-tanvir-1",
+        device: "Chrome on Windows",
+        ip: "103.114.98.24",
+        isCurrent: false,
+        createdAt: new Date(Date.now() - 2 * 3600000).toISOString(),
+        lastActiveAt: new Date().toISOString(),
+      },
+      {
+        id: "sess-tanvir-2",
+        device: "Chrome on Android",
+        ip: "103.114.98.24",
+        isCurrent: false,
+        createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+        lastActiveAt: new Date(Date.now() - 45 * 60000).toISOString(),
+      },
+      {
+        id: "sess-tanvir-3",
+        device: "Safari on iPhone",
+        ip: "103.102.42.12",
+        isCurrent: false,
+        createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
+        lastActiveAt: new Date(Date.now() - 24 * 3600000).toISOString(),
+      },
+      {
+        id: "sess-tanvir-4",
+        device: "Firefox on Linux",
+        ip: "119.30.38.150",
+        isCurrent: false,
+        createdAt: new Date(Date.now() - 21 * 86400000).toISOString(),
+        lastActiveAt: new Date(Date.now() - 21 * 86400000).toISOString(),
+      },
+    ],
+  },
+
+  // Student 2: Maya Rahman
+  {
+    id: "user-maya",
+    name: "Maya Rahman",
+    email: "maya.rahman@northsouth.edu",
+    isEmailVerified: true,
+    studentId: "2023-3-60-045",
+    departmentCode: "CSE",
+    batch: "Fall 2023",
+    role: "STUDENT",
+    status: "ACTIVE",
+    phone: "+8801819234567",
+    contactVisibility: "AFTER_CONFIRMATION",
+    reliability: 96,
+    swapsCompleted: 6,
+    swapsCancelled: 0,
+    preferredDays: ["MON", "WED"],
+    preferredTimeRange: "MORNING",
+    allowMultiWaySwaps: true,
+    notifyByEmail: true,
+    notifyInApp: true,
+    createdAt: "2023-09-10T12:00:00.000Z",
+    lastLoginAt: "2026-11-06T19:00:00.000Z",
+    sessions: [],
+  },
+
+  // Student 3: Arif Hossain
+  {
+    id: "user-arif",
+    name: "Arif Hossain",
+    email: "arif.hossain@northsouth.edu",
+    isEmailVerified: true,
+    studentId: "2024-2-60-089",
+    departmentCode: "EEE",
+    batch: "Summer 2024",
+    role: "STUDENT",
+    status: "ACTIVE",
+    phone: "+8801912887766",
+    contactVisibility: "AFTER_CONFIRMATION",
+    reliability: 88,
+    swapsCompleted: 3,
+    swapsCancelled: 1,
+    preferredDays: ["SUN", "TUE"],
+    preferredTimeRange: "AFTERNOON",
+    allowMultiWaySwaps: true,
+    notifyByEmail: true,
+    notifyInApp: true,
+    createdAt: "2024-05-18T14:20:00.000Z",
+    lastLoginAt: "2026-11-06T18:10:00.000Z",
+    sessions: [],
+  },
+
+  // Suspended Student: Farhan Ahmed (Reason: Repeated cancel after confirm)
+  {
+    id: "user-farhan",
+    name: "Farhan Ahmed",
+    email: "farhan.ahmed@northsouth.edu",
+    isEmailVerified: true,
+    studentId: "2022-2-60-190",
+    departmentCode: "ENG",
+    batch: "Summer 2022",
+    role: "STUDENT",
+    status: "SUSPENDED",
+    suspendedReason: "Repeated cancel after confirm: caused 2 multi-way cycle breakdowns",
+    phone: "+8801755112233",
+    contactVisibility: "HIDDEN",
+    reliability: 45,
+    swapsCompleted: 1,
+    swapsCancelled: 4,
+    preferredDays: ["SUN", "TUE"],
+    preferredTimeRange: "ANY",
+    allowMultiWaySwaps: false,
+    notifyByEmail: true,
+    notifyInApp: false,
+    createdAt: "2022-05-10T08:00:00.000Z",
+    lastLoginAt: "2026-10-25T11:00:00.000Z",
+    sessions: [],
+  },
+
+  // Suspended Student 2: Rashedul Karim
+  {
+    id: "user-rashed",
+    name: "Rashedul Karim",
+    email: "rashedul.karim@northsouth.edu",
+    isEmailVerified: true,
+    studentId: "2023-1-60-701",
+    departmentCode: "BBA",
+    batch: "Spring 2023",
+    role: "STUDENT",
+    status: "SUSPENDED",
+    suspendedReason: "Unresponsive during active confirmation window resulting in timeout",
+    phone: "+8801822334455",
+    contactVisibility: "HIDDEN",
+    reliability: 52,
+    swapsCompleted: 2,
+    swapsCancelled: 3,
+    preferredDays: ["MON", "WED"],
+    preferredTimeRange: "MORNING",
+    allowMultiWaySwaps: true,
+    notifyByEmail: false,
+    notifyInApp: true,
+    createdAt: "2023-01-15T09:00:00.000Z",
+    lastLoginAt: "2026-10-18T16:20:00.000Z",
+    sessions: [],
+  },
+
+  // Unverified Student 1: Nafisa Kamal (Registered 8 days ago, unverified)
+  {
+    id: "user-nafisa",
+    name: "Nafisa Kamal",
+    email: "nafisa.kamal@northsouth.edu",
+    isEmailVerified: false,
+    studentId: "2025-1-60-312",
+    departmentCode: "CSE",
+    batch: "Spring 2025",
+    role: "STUDENT",
+    status: "ACTIVE",
+    phone: "+8801999888777",
+    contactVisibility: "HIDDEN",
+    reliability: 100,
+    swapsCompleted: 0,
+    swapsCancelled: 0,
+    preferredDays: ["SUN", "TUE"],
+    preferredTimeRange: "ANY",
+    allowMultiWaySwaps: true,
+    notifyByEmail: true,
+    notifyInApp: true,
+    createdAt: new Date(Date.now() - 8 * 86400000).toISOString(),
+    lastLoginAt: new Date(Date.now() - 8 * 86400000).toISOString(),
+    sessions: [],
+  },
+
+  // Unverified Student 2: Sajid Imtiaz (Registered 9 days ago)
+  {
+    id: "user-sajid",
+    name: "Sajid Imtiaz",
+    email: "sajid.imtiaz@northsouth.edu",
+    isEmailVerified: false,
+    studentId: "2025-1-60-405",
+    departmentCode: "EEE",
+    batch: "Spring 2025",
+    role: "STUDENT",
+    status: "ACTIVE",
+    phone: "+8801733441122",
+    contactVisibility: "HIDDEN",
+    reliability: 100,
+    swapsCompleted: 0,
+    swapsCancelled: 0,
+    preferredDays: ["MON", "WED"],
+    preferredTimeRange: "ANY",
+    allowMultiWaySwaps: true,
+    notifyByEmail: true,
+    notifyInApp: true,
+    createdAt: new Date(Date.now() - 9 * 86400000).toISOString(),
+    lastLoginAt: new Date(Date.now() - 9 * 86400000).toISOString(),
+    sessions: [],
+  },
+];
+
+// Seed generator to produce up to 48 users deterministically
+for (let i = 11; i <= 48; i++) {
+  const depts = ["CSE", "EEE", "BBA", "ENG", "MAT", "PHY"];
+  const d = depts[i % depts.length];
+  const isSusp = i === 18 || i === 29;
+  const isUnver = i === 14 || i === 22 || i === 35 || i === 44;
+
+  initialAdminUsers.push({
+    id: `user-gen-${i}`,
+    name: `Student ${i} (${d})`,
+    email: `student.${i}@northsouth.edu`,
+    isEmailVerified: !isUnver,
+    studentId: `2024-${(i % 3) + 1}-60-${100 + i}`,
+    departmentCode: d,
+    batch: `202${3 + (i % 3)}`,
+    role: "STUDENT",
+    status: isSusp ? "SUSPENDED" : "ACTIVE",
+    suspendedReason: isSusp ? "Multiple failed confirmations" : undefined,
+    phone: `+8801700${100000 + i}`,
+    contactVisibility: "AFTER_CONFIRMATION",
+    reliability: 70 + (i % 30),
+    swapsCompleted: i % 5,
+    swapsCancelled: i % 2,
+    preferredDays: ["SUN", "TUE"],
+    preferredTimeRange: "MORNING",
+    allowMultiWaySwaps: true,
+    notifyByEmail: true,
+    notifyInApp: true,
+    createdAt: new Date(Date.now() - (10 + i) * 86400000).toISOString(),
+    lastLoginAt: new Date(Date.now() - (i % 10) * 86400000).toISOString(),
+    sessions: [],
+  });
+}
+
+// Initial System Settings
+export const initialSystemSettings: SystemSettingsState = {
+  confirmationTimeLimitHours: 24,
+  maxChainLength: 3,
+  allowMultiWaySwapsGlobally: true,
+  maxOpenRequestsPerStudent: 3,
+  pointsLostOnCancelAfterConfirm: 15,
+  pointsLostOnDecline: 5,
+  minScoreForMatching: 50,
+  allowedEmailDomains: ["northsouth.edu", "alumni.northsouth.edu"],
+  requireVerifiedEmail: true,
+  sessionLengthDays: 7,
+  reminderHoursBeforeExpiry: 4,
+};
+
+// Initial 80 Audit Entries
+export const initialAuditLogs: AuditEntry[] = [
+  {
+    id: "audit-1",
+    timestamp: new Date(Date.now() - 15 * 60000).toISOString(),
+    actorName: "Nusrat Jahan",
+    actorRole: "ADMIN",
+    action: "SWAP_WINDOW_OPENED",
+    targetType: "TERM",
+    targetId: "term-fall-2026",
+    targetLabel: "Fall 2026",
+    details: [{ field: "swapWindowOpen", oldValue: false, newValue: true }],
+  },
+  {
+    id: "audit-2",
+    timestamp: new Date(Date.now() - 2 * 3600000).toISOString(),
+    actorName: "Dr. Kazi Shafiq",
+    actorRole: "ADMIN",
+    action: "USER_SUSPENDED",
+    targetType: "USER",
+    targetId: "user-farhan",
+    targetLabel: "Farhan Ahmed (ENG)",
+    details: [{ field: "status", oldValue: "ACTIVE", newValue: "SUSPENDED", reason: "Repeated cancel after confirm" }],
+  },
+  {
+    id: "audit-3",
+    timestamp: new Date(Date.now() - 5 * 3600000).toISOString(),
+    actorName: "Nusrat Jahan",
+    actorRole: "ADMIN",
+    action: "SECTION_UPDATED",
+    targetType: "SECTION",
+    targetId: "sec-cse327-1",
+    targetLabel: "CSE327 Sec 1",
+    details: [{ field: "capacity", oldValue: 30, newValue: 35 }],
+  },
+  {
+    id: "audit-4",
+    timestamp: new Date(Date.now() - 24 * 3600000).toISOString(),
+    actorName: "Sabrina Anwar",
+    actorRole: "ADMIN",
+    action: "COURSE_CREATED",
+    targetType: "COURSE",
+    targetId: "c-cse465",
+    targetLabel: "CSE465 (Artificial Intelligence)",
+    details: [{ summary: "Created new 3.0 credit elective for CSE department" }],
+  },
+  {
+    id: "audit-5",
+    timestamp: new Date(Date.now() - 28 * 3600000).toISOString(),
+    actorName: "Nusrat Jahan",
+    actorRole: "ADMIN",
+    action: "SETTINGS_CHANGED",
+    targetType: "SETTINGS",
+    targetLabel: "Matching Rules",
+    details: [
+      { field: "confirmationTimeLimitHours", oldValue: 48, newValue: 24 },
+      { field: "reminderHoursBeforeExpiry", oldValue: 6, newValue: 4 },
+    ],
+  },
+];
+
+// Populate more deterministic audit entries up to 80
+for (let i = 6; i <= 80; i++) {
+  const actions: AuditEntry["action"][] = [
+    "USER_ROLE_CHANGED",
+    "USER_SESSIONS_REVOKED",
+    "SECTION_CREATED",
+    "SECTION_UPDATED",
+    "SWAP_FORCE_CANCELLED",
+    "COURSE_UPDATED",
+  ];
+  const act = actions[i % actions.length];
+  initialAuditLogs.push({
+    id: `audit-${i}`,
+    timestamp: new Date(Date.now() - (i * 4) * 3600000).toISOString(),
+    actorName: i % 2 === 0 ? "Nusrat Jahan" : "Dr. Kazi Shafiq",
+    actorRole: "ADMIN",
+    action: act,
+    targetType: act.startsWith("USER") ? "USER" : act.startsWith("SWAP") ? "SWAP" : "SECTION",
+    targetLabel: act.startsWith("USER") ? `Student ID 2024-1-60-${100 + i}` : `CSE${300 + (i % 50)} Section ${1 + (i % 6)}`,
+    details: [{ summary: `Routine administrative action performed for ${act.toLowerCase().replace(/_/g, " ")}` }],
+  });
+}
