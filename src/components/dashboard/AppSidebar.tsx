@@ -35,9 +35,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
   // Student Navigation
   const studentNavItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "My Routine", href: "/dashboard/routine", icon: CalendarDays },
     { label: "Swap Requests", href: "/dashboard/swaps", icon: ArrowRightLeft },
-    { label: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
   // Admin Navigation (visible to admins)
@@ -50,6 +48,8 @@ export function AppSidebar({ user }: AppSidebarProps) {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
   };
+
+  const isSettingsActive = pathname === "/dashboard/settings";
 
   const NavContent = () => (
     <div className="flex flex-col h-full justify-between p-4 text-[#16231F]">
@@ -145,9 +145,25 @@ export function AppSidebar({ user }: AppSidebarProps) {
         )}
       </div>
 
-      {/* User Mini Bar & Logout */}
-      <div className="pt-4 border-t border-[#16231F]/10 space-y-3">
-        <div className="px-2 py-1.5 rounded-[8px] bg-white border border-[#16231F]/10">
+      {/* Footer Nav: Settings & User Mini Bar */}
+      <div className="pt-4 border-t border-[#16231F]/10 space-y-2">
+        <Link
+          href="/dashboard/settings"
+          onClick={() => setMobileOpen(false)}
+          className={`flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-semibold transition ${
+            isSettingsActive
+              ? "bg-[#1D5B4A] text-white shadow-sm"
+              : "text-[#16231F]/75 hover:bg-[#16231F]/5 hover:text-[#16231F]"
+          }`}
+        >
+          <div className="flex items-center gap-2.5">
+            <Settings className="w-4 h-4" />
+            <span>Settings</span>
+          </div>
+          {isSettingsActive && <ChevronRight className="w-3.5 h-3.5 text-white/70" />}
+        </Link>
+
+        <div className="px-2.5 py-2 rounded-[8px] bg-white border border-[#16231F]/10">
           <p className="font-semibold text-xs text-[#16231F] truncate">
             {user?.name || "Student"}
           </p>
