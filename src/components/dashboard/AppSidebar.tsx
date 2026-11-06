@@ -9,6 +9,7 @@ import {
   ArrowRightLeft,
   Settings,
   ShieldCheck,
+  Users,
   LogOut,
   ChevronRight,
   Menu,
@@ -31,20 +32,19 @@ export function AppSidebar({ user }: AppSidebarProps) {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navItems = [
+  // Student Navigation
+  const studentNavItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "My Routine", href: "/dashboard/routine", icon: CalendarDays },
     { label: "Swap Requests", href: "/dashboard/swaps", icon: ArrowRightLeft },
     { label: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
-  if (user?.role === "ADMIN") {
-    navItems.push({
-      label: "Admin Portal",
-      href: "/admin",
-      icon: ShieldCheck,
-    });
-  }
+  // Admin Navigation (visible to admins)
+  const adminNavItems = [
+    { label: "Overview", href: "/admin", icon: ShieldCheck },
+    { label: "User Management", href: "/admin/users", icon: Users },
+  ];
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -53,11 +53,11 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
   const NavContent = () => (
     <div className="flex flex-col h-full justify-between p-4 text-[#16231F]">
-      <div>
+      <div className="space-y-6">
         {/* Brand / Logo */}
         <Link
           href="/dashboard"
-          className="flex items-center gap-2.5 font-heading font-extrabold text-lg tracking-tight text-[#16231F] px-2 py-3 mb-4"
+          className="flex items-center gap-2.5 font-heading font-extrabold text-lg tracking-tight text-[#16231F] px-2 py-2"
         >
           <span
             className="grid grid-cols-2 gap-0.5 w-6 h-6 p-0.5 border border-[#16231F]/25 rounded-[4px] bg-white shrink-0"
@@ -73,38 +73,76 @@ export function AppSidebar({ user }: AppSidebarProps) {
           </span>
         </Link>
 
-        {/* Navigation list */}
-        <p className="text-[10px] font-bold uppercase tracking-wider text-[#16231F]/50 px-3 mb-2">
-          Navigation
-        </p>
-        <nav className="space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              item.href === "/admin"
-                ? pathname.startsWith("/admin")
-                : pathname === item.href;
+        {/* Student Section */}
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[#16231F]/50 px-3 mb-1.5">
+            Student Portal
+          </p>
+          <nav className="space-y-1">
+            {studentNavItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
 
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className={`flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-semibold transition ${
-                  isActive
-                    ? "bg-[#1D5B4A] text-white shadow-sm"
-                    : "text-[#16231F]/75 hover:bg-[#16231F]/5 hover:text-[#16231F]"
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </div>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/70" />}
-              </Link>
-            );
-          })}
-        </nav>
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-semibold transition ${
+                    isActive
+                      ? "bg-[#1D5B4A] text-white shadow-sm"
+                      : "text-[#16231F]/75 hover:bg-[#16231F]/5 hover:text-[#16231F]"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </div>
+                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/70" />}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Admin Section (Only rendered if admin) */}
+        {user?.role === "ADMIN" && (
+          <div>
+            <div className="flex items-center justify-between px-3 mb-1.5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#16231F]/50">
+                Administration
+              </p>
+              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#F5E39B] text-[#16231F]">
+                STAFF
+              </span>
+            </div>
+            <nav className="space-y-1">
+              {adminNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-semibold transition ${
+                      isActive
+                        ? "bg-[#1D5B4A] text-white shadow-sm"
+                        : "text-[#16231F]/75 hover:bg-[#16231F]/5 hover:text-[#16231F]"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                    </div>
+                    {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/70" />}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        )}
       </div>
 
       {/* User Mini Bar & Logout */}
