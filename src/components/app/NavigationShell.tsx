@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -22,6 +22,30 @@ export function StudentSidebar() {
   const { unreadCount } = useNotifications();
   const { student, resetStore } = useProfile();
   const { toast } = useToast();
+  const [realUser, setRealUser] = useState<{
+    name: string;
+    studentId?: string;
+    department?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/users/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && (data.name || data.email)) {
+          setRealUser({
+            name: data.name || data.email,
+            studentId: data.studentId || undefined,
+            department: data.department?.code || undefined,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const displayName = realUser?.name || student.name;
+  const displayStudentId = realUser?.studentId || student.studentId;
+  const displayDepartment = realUser?.department || student.department;
 
   const handleLogout = async () => {
     try {
@@ -124,10 +148,10 @@ export function StudentSidebar() {
         {/* User Card */}
         <div className="p-2.5 rounded-[8px] bg-white border border-[#16231F]/15">
           <p className="font-semibold text-xs text-[#16231F] truncate">
-            {student.name}
+            {displayName}
           </p>
           <p className="text-[10px] text-[#16231F]/60 font-mono mt-0.5">
-            {student.studentId} · {student.department}
+            {displayStudentId} · {displayDepartment}
           </p>
         </div>
 
@@ -151,9 +175,22 @@ export function StudentTopBar() {
   const { student } = useProfile();
   const { toast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [realUser, setRealUser] = useState<{ name: string } | null>(null);
 
-  const initials = student.name
-    ? student.name
+  useEffect(() => {
+    fetch("/api/users/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && (data.name || data.email)) {
+          setRealUser({ name: data.name || data.email });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const displayName = realUser?.name || student.name;
+  const initials = displayName
+    ? displayName
         .split(" ")
         .map((n) => n[0])
         .join("")
@@ -181,7 +218,9 @@ export function StudentTopBar() {
         <span className="text-[#16231F]/30 text-xs hidden sm:inline">|</span>
         <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] bg-[#C2E4CE] text-[#1D5B4A] text-[11px] sm:text-xs font-semibold shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-[#1D5B4A] shrink-0" />
-          <span className="hidden sm:inline">Swap window open, closes in 3 days</span>
+          <span className="hidden sm:inline">
+            Swap window open, closes in 3 days
+          </span>
           <span className="sm:hidden">Window open</span>
         </span>
       </div>
@@ -212,7 +251,7 @@ export function StudentTopBar() {
               {initials}
             </div>
             <span className="text-xs font-semibold text-[#16231F] hidden sm:inline truncate max-w-[120px]">
-              {student.name}
+              {displayName}
             </span>
           </button>
 

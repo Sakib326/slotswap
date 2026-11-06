@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -29,6 +29,21 @@ export function AdminSidebar() {
   const router = useRouter();
   const { state, dispatch } = useAdminStore();
   const { toast } = useToast();
+  const [realUser, setRealUser] = useState<{ name: string; email: string } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/users/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && (data.name || data.email)) {
+          setRealUser({ name: data.name || data.email, email: data.email });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const displayName = realUser?.name || state.currentAdmin.name;
+  const displayEmail = realUser?.email || state.currentAdmin.email;
 
   const handleLogout = async () => {
     try {
@@ -153,10 +168,10 @@ export function AdminSidebar() {
 
         <div className="p-2.5 rounded-[8px] bg-white border border-[#16231F]/15">
           <p className="font-semibold text-xs text-[#16231F] truncate">
-            {state.currentAdmin.name}
+            {displayName}
           </p>
           <p className="text-[10px] text-[#16231F]/60 font-mono mt-0.5">
-            {state.currentAdmin.email} · Staff
+            {displayEmail} · Staff
           </p>
         </div>
 
@@ -178,9 +193,22 @@ export function AdminTopBar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { state } = useAdminStore();
   const { toast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [realUser, setRealUser] = useState<{ name: string } | null>(null);
 
-  const initials = state.currentAdmin.name
-    ? state.currentAdmin.name
+  useEffect(() => {
+    fetch("/api/users/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && (data.name || data.email)) {
+          setRealUser({ name: data.name || data.email });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const displayName = realUser?.name || state.currentAdmin.name;
+  const initials = displayName
+    ? displayName
         .split(" ")
         .map((n) => n[0])
         .join("")
