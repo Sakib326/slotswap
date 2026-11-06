@@ -179,6 +179,15 @@ export function AdminTopBar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { toast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const initials = state.currentAdmin.name
+    ? state.currentAdmin.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "AD";
+
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
@@ -251,7 +260,7 @@ export function AdminTopBar({ onMenuClick }: { onMenuClick?: () => void }) {
             className="w-7 h-7 rounded-full bg-[#1D5B4A] text-white font-bold text-xs flex items-center justify-center hover:opacity-90"
             aria-expanded={menuOpen}
           >
-            NJ
+            {initials}
           </button>
 
           {menuOpen && (

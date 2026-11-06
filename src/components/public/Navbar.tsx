@@ -21,53 +21,59 @@ export function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
+    // Helper to inspect client storage (for mock demo sessions)
+    const checkStorage = () => {
+      try {
+        const mockAdmin = sessionStorage.getItem("slotswap_admin_store_v1");
+        const mockStudent = sessionStorage.getItem("slotswap_mock_store_v1");
+
+        if (mockAdmin) {
+          const parsed = JSON.parse(mockAdmin);
+          if (parsed.currentAdmin) {
+            return {
+              name: parsed.currentAdmin.name,
+              email: parsed.currentAdmin.email,
+              role: "ADMIN",
+            };
+          }
+        }
+
+        if (mockStudent) {
+          const parsed = JSON.parse(mockStudent);
+          if (parsed.student) {
+            return {
+              name: parsed.student.name,
+              email: parsed.student.email,
+              role: "STUDENT",
+              studentId: parsed.student.studentId,
+            };
+          }
+        }
+      } catch {}
+      return null;
+    };
+
     // 1. Check real backend session
     fetch("/api/users/me")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data?.user) {
+        if (data && (data.name || data.email)) {
           setCurrentUser({
-            name: data.user.name || data.user.email,
-            email: data.user.email,
-            role: data.user.role,
-            studentId: data.user.studentId,
+            name: data.name || data.email,
+            email: data.email,
+            role: data.role || "STUDENT",
+            studentId: data.studentId,
           });
         } else {
-          // 2. Check mock session in client storage if in mock demo mode
-          const mockStudent = sessionStorage.getItem("slotswap_store_v1");
-          const mockAdmin = sessionStorage.getItem("slotswap_admin_store_v1");
-
-          if (mockAdmin && pathname.startsWith("/admin")) {
-            try {
-              const parsed = JSON.parse(mockAdmin);
-              if (parsed.currentAdmin) {
-                setCurrentUser({
-                  name: parsed.currentAdmin.name,
-                  email: parsed.currentAdmin.email,
-                  role: "ADMIN",
-                });
-                return;
-              }
-            } catch {}
-          }
-
-          if (mockStudent) {
-            try {
-              const parsed = JSON.parse(mockStudent);
-              if (parsed.student) {
-                setCurrentUser({
-                  name: parsed.student.name,
-                  email: parsed.student.email,
-                  role: "STUDENT",
-                  studentId: parsed.student.studentId,
-                });
-                return;
-              }
-            } catch {}
-          }
+          // Fall back to client demo store
+          const storageUser = checkStorage();
+          setCurrentUser(storageUser);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        const storageUser = checkStorage();
+        setCurrentUser(storageUser);
+      });
   }, [pathname]);
 
   const handleLogout = async () => {

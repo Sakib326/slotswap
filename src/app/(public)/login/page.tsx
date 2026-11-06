@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/public/Container";
@@ -11,6 +11,44 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Guard: if already logged in, redirect away from /login
+  useEffect(() => {
+    // 1. Check real backend session
+    fetch("/api/users/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && (data.name || data.email)) {
+          router.replace(data.role === "ADMIN" ? "/admin" : "/dashboard");
+          return;
+        }
+        checkMockStore();
+      })
+      .catch(() => {
+        checkMockStore();
+      });
+
+    function checkMockStore() {
+      try {
+        const mockAdmin = sessionStorage.getItem("slotswap_admin_store_v1");
+        const mockStudent = sessionStorage.getItem("slotswap_mock_store_v1");
+        if (mockAdmin) {
+          const parsed = JSON.parse(mockAdmin);
+          if (parsed.currentAdmin) {
+            router.replace("/admin");
+            return;
+          }
+        }
+        if (mockStudent) {
+          const parsed = JSON.parse(mockStudent);
+          if (parsed.student) {
+            router.replace("/dashboard");
+            return;
+          }
+        }
+      } catch {}
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

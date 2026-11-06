@@ -36,7 +36,7 @@ export function SwapChain({
                     <div className="flex items-center gap-1.5 min-w-0">
                       <User className="w-3.5 h-3.5 text-[#16231F]/50 shrink-0" aria-hidden="true" />
                       <span className="font-semibold text-xs text-[#16231F] truncate">
-                        {p.isYou ? "You (Tanvir)" : p.name}
+                        {p.isYou ? `You (${p.name.split(" ")[0]})` : p.name}
                       </span>
                       {p.isYou && (
                         <span className="px-1.5 py-0.2 rounded bg-[#1D5B4A] text-white text-[10px] font-bold shrink-0">

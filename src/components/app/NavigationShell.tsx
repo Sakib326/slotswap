@@ -152,6 +152,15 @@ export function StudentTopBar() {
   const { toast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const initials = student.name
+    ? student.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "ST";
+
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
@@ -200,7 +209,7 @@ export function StudentTopBar() {
             aria-expanded={menuOpen}
           >
             <div className="w-7 h-7 rounded-full bg-[#C2E4CE] text-[#1D5B4A] font-bold text-xs flex items-center justify-center shrink-0">
-              TH
+              {initials}
             </div>
             <span className="text-xs font-semibold text-[#16231F] hidden sm:inline truncate max-w-[120px]">
               {student.name}

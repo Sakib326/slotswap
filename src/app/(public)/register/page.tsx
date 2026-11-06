@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Container } from "@/components/public/Container";
 
 interface Department {
@@ -11,6 +12,7 @@ interface Department {
 }
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -22,6 +24,44 @@ export default function RegisterPage() {
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Guard: if already logged in, redirect away from /register
+  useEffect(() => {
+    // 1. Check real backend session
+    fetch("/api/users/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && (data.name || data.email)) {
+          router.replace(data.role === "ADMIN" ? "/admin" : "/dashboard");
+          return;
+        }
+        checkMockStore();
+      })
+      .catch(() => {
+        checkMockStore();
+      });
+
+    function checkMockStore() {
+      try {
+        const mockAdmin = sessionStorage.getItem("slotswap_admin_store_v1");
+        const mockStudent = sessionStorage.getItem("slotswap_mock_store_v1");
+        if (mockAdmin) {
+          const parsed = JSON.parse(mockAdmin);
+          if (parsed.currentAdmin) {
+            router.replace("/admin");
+            return;
+          }
+        }
+        if (mockStudent) {
+          const parsed = JSON.parse(mockStudent);
+          if (parsed.student) {
+            router.replace("/dashboard");
+            return;
+          }
+        }
+      } catch {}
+    }
+  }, [router]);
 
   useEffect(() => {
     fetch("/api/departments")
